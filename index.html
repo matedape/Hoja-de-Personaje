@@ -49,16 +49,21 @@
         <input type="text" placeholder="20 / 20">
       </div>
       <div class="form-group">
-        <label>Acciones x Turno</label>
-        <input type="number" value="3">
-      </div>
-      <div class="form-group">
         <label>Exp</label>
         <input type="number" placeholder="0">
       </div>
       <div class="form-group">
         <label>Oro</label>
         <input type="number" placeholder="0">
+      </div>
+
+       <div class="form-group full-width">
+        <label>energias (<span id="energyCount">3</span>/3)</label>
+        <div class="circle-tracker" id="energyTracker">
+          <input type="checkbox" class="energy-cb">
+          <input type="checkbox" class="energy-cb">
+          <input type="checkbox" class="energy-cb">
+        </div>
       </div>
 
       <!-- TIRADAS DE SALVACIÓN CON CONTADOR DINÁMICO -->
@@ -230,6 +235,12 @@
       const saveBoxes = document.querySelectorAll('.save-cb');
       const saveChecked = document.querySelectorAll('.save-cb:checked').length;
       const saveCountElem = document.getElementById('saveCount');
+       const energyBoxes = document.querySelectorAll('.energy-cb');
+      const energyChecked = document.querySelectorAll('.energy-cb:checked').length;
+      const energyCountElem = document.getElementById('energyCount');
+      if (energyCountElem) {
+        energyCountElem.textContent = energyBoxes.length - energyChecked;
+      }
       if (saveCountElem) {
         saveCountElem.textContent = saveBoxes.length - saveChecked;
       }
@@ -237,6 +248,7 @@
       const foodBoxes = document.querySelectorAll('.food-cb');
       const foodChecked = document.querySelectorAll('.food-cb:checked').length;
       const foodCountElem = document.getElementById('foodCount');
+      
       if (foodCountElem) {
         foodCountElem.textContent = foodBoxes.length - foodChecked;
       }
@@ -432,7 +444,7 @@
 
       document.addEventListener('change', (e) => {
         saveAllData();
-        if (e.target.classList.contains('save-cb') || e.target.classList.contains('food-cb')) {
+        if (e.target.classList.contains('save-cb') || e.target.classList.contains('food-cb') || e.target.classList.contains('energy-cb')) {
           updateTrackers();
         }
       });
