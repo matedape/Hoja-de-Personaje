@@ -1,0 +1,232 @@
+:root {
+  --bg-color: #0e0906;
+  --paper-bg: #f2e3c6;
+  --paper-border: #8c6d3f;
+  --text-color: #2b1d0c;
+  --accent-color: #7a1c1c;
+  --accent-hover: #a32424;
+  --font-title: 'MedievalSharp', cursive;
+  --font-body: 'Cinzel', serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* Fondo de taberna de alta calidad + viñeta de iluminación tipo fuego/antorcha */
+  background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(circle at center, rgba(255, 120, 30, 0.15) 0%, rgba(0, 0, 0, 0.75) 85%),
+    url('https://preview.redd.it/w5cazyslyl691.gif?width=1080&crop=smart&format=png8&s=806f077aa798ce4013be274b406ae35bcda06f6e');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  
+  color: var(--text-color);
+  font-family: var(--font-body);
+  padding: 15px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.sheet-container {
+  background-color: var(--paper-bg);
+  border: 4px solid var(--paper-border);
+  border-radius: 8px;
+  /* Sombra más pronunciada para despegar la hoja del fondo de madera */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(140, 109, 63, 0.35);
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+  overflow: hidden;
+  backdrop-filter: blur(1px);
+}
+
+h1, h2 {
+  font-family: var(--font-title);
+  text-align: center;
+  color: var(--accent-color);
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+}
+
+.section {
+  border: 2px solid var(--paper-border);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.35);
+  min-width: 0;
+}
+
+.form-group {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+label {
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+input[type="text"], input[type="number"] {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--paper-border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+input:focus {
+  background: #fff;
+  border-color: var(--accent-color);
+}
+
+/* GRID RESPONSIVO FIX PARA EVITAR BORDES DESBORDADOS */
+.grid-2, .grid-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+/* TRACKER DE CÍRCULOS (COMIDA Y SALVACIÓN) */
+.circle-tracker {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.circle-tracker input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--accent-color);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.circle-tracker input[type="checkbox"]:checked {
+  background-color: var(--accent-color);
+  box-shadow: inset 0 0 0 3px var(--paper-bg);
+}
+
+.hit-dice-group {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--paper-border);
+}
+
+/* FORMULARIO DE AGREGAR ELEMENTOS */
+.add-item-form {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.add-item-form input[type="text"] {
+  flex: 2;
+  min-width: 0;
+}
+
+.add-item-form .input-short {
+  flex: 1;
+  min-width: 0;
+}
+
+button {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: var(--font-title);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+button:hover {
+  background-color: var(--accent-hover);
+}
+
+.item-list {
+  list-style: none;
+}
+
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  border-left: 3px solid var(--accent-color);
+  gap: 6px;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-qty {
+  padding: 2px 6px;
+  font-size: 0.8rem;
+}
+
+.btn-delete {
+  background: #4a0000;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+}
+
+/* ESTILOS DE TARJETAS DE ESTADO */
+.status-card {
+  border-left-color: #8b0000;
+}
+
+.status-badge {
+  background: rgba(122, 28, 28, 0.15);
+  border: 1px solid var(--accent-color);
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  white-space: nowrap;
+}

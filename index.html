@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Personaje</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="sheet-container">
+    <h1>Ficha de Personaje</h1>
+
+    <!-- DATOS BÁSICOS -->
+    <div class="section">
+      <div class="form-group">
+        <label>Nombre del Personaje</label>
+        <input type="text" placeholder="Ej: Orc el Indomable">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Clase</label>
+          <input type="text" placeholder="Ej: Mago">
+        </div>
+        <div class="form-group">
+          <label>Sexo</label>
+          <input type="text" placeholder="Ej: Masculino">
+        </div>
+        <div class="form-group">
+          <label>Raza</label>
+          <input type="text" placeholder="Ej: Humano">
+        </div>
+        <div class="form-group">
+          <label>Nivel</label>
+          <input type="number" value="1">
+        </div>
+      </div>
+    </div>
+
+    <!-- PUNTOS DE VIDA, ACCIONES Y RECURSOS -->
+    <div class="section grid-2">
+      <div class="form-group">
+        <label>Vida (Actual / Máx)</label>
+        <input type="text" placeholder="20 / 20">
+      </div>
+      <div class="form-group">
+        <label>Acciones x Turno</label>
+        <input type="number" value="3">
+      </div>
+      <div class="form-group">
+        <label>Exp</label>
+        <input type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Oro 🪙</label>
+        <input type="number" placeholder="0">
+      </div>
+
+      <!-- TIRADAS DE SALVACIÓN CON CONTADOR DINÁMICO -->
+      <div class="form-group full-width">
+        <label>Tiradas de Salvación (<span id="saveCount">3</span>/3)</label>
+        <div class="circle-tracker" id="saveTracker">
+          <input type="checkbox" class="save-cb">
+          <input type="checkbox" class="save-cb">
+          <input type="checkbox" class="save-cb">
+        </div>
+      </div>
+
+      <!-- COMIDA CON CONTADOR DINÁMICO -->
+      <div class="form-group full-width">
+        <label>Comida / Raciones (<span id="foodCount">5</span>/5)</label>
+        <div class="circle-tracker" id="foodTracker">
+          <input type="checkbox" class="food-cb">
+          <input type="checkbox" class="food-cb">
+          <input type="checkbox" class="food-cb">
+          <input type="checkbox" class="food-cb">
+          <input type="checkbox" class="food-cb">
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADOS Y EFECTOS -->
+    <div class="section">
+      <h2>Estados / Efectos</h2>
+      <div class="add-item-form">
+        <input type="text" id="statusName" placeholder="Ej: Envenenado">
+        <input type="text" id="statusDuration" class="input-short" placeholder="Cargas">
+        <button type="button" onclick="addStatus()">+</button>
+      </div>
+
+      <ul id="statusList" class="item-list"></ul>
+    </div>
+
+    <!-- ATRIBUTOS CUSTOM -->
+    <div class="section">
+      <h2>Atributos</h2>
+      <div class="grid-stats">
+        <div class="form-group">
+          <label>Constitución</label>
+          <input type="number" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label>Fuerza</label>
+          <input type="number" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label>Destreza</label>
+          <input type="number" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label>Inteligencia</label>
+          <input type="number" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label>Sabiduría</label>
+          <input type="number" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label>Carisma</label>
+          <input type="number" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label>Velocidad</label>
+          <input type="text" placeholder="30+5">
+        </div>
+        <div class="form-group">
+          <label>Percepción</label>
+          <input type="number" placeholder="10">
+        </div>
+      </div>
+
+      <!-- DADOS DE GOLPE Y GUARDIA -->
+      <div class="form-group hit-dice-group">
+        <label>Dados / Puntos de Golpe (PG)</label>
+        <input type="text" placeholder="Ej: 2d12">
+      </div>
+      <div class="form-group">
+        <label>Puntos de Guardia</label>
+        <input type="number" placeholder="14">
+      </div>
+    </div>
+
+    <!-- EQUIPAMIENTO -->
+    <div class="section">  
+      <h2>Equipamiento</h2>
+      <div class="add-item-form">
+        <input type="text" id="equipName" placeholder="Arma, Armadura, reliquias...">
+        <input type="number" id="equipQty" class="input-short" value="1" min="1">
+        <button type="button" onclick="addEquipment()">+</button>
+      </div>
+
+      <ul id="equipmentList" class="item-list"></ul>
+    </div>
+
+    <!-- MOCHILA INTERACTIVA -->
+    <div class="section">
+      <h2>Mochila</h2>
+      <div class="add-item-form">
+        <input type="text" id="backpackName" placeholder="Objeto...">
+        <input type="number" id="backpackQty" class="input-short" value="1" min="1">
+        <button type="button" onclick="addBackpackItem()">+</button>
+      </div>
+
+      <ul id="backpackList" class="item-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    let equipment = [];
+    let backpack = [];
+    let statuses = [];
+
+    // --- GUARDADO Y CARGA EN LOCALSTORAGE ---
+
+    function saveAllData() {
+      const inputs = document.querySelectorAll('.sheet-container input[type="text"], .sheet-container input[type="number"]');
+      const inputsData = {};
+      inputs.forEach((input, index) => {
+        const key = input.id ? input.id : 'input_' + index;
+        inputsData[key] = input.value;
+      });
+      localStorage.setItem('dnd_sheet_inputs', JSON.stringify(inputsData));
+
+      const checkboxes = document.querySelectorAll('.sheet-container input[type="checkbox"]');
+      const cbData = Array.from(checkboxes).map(cb => cb.checked);
+      localStorage.setItem('dnd_sheet_checkboxes', JSON.stringify(cbData));
+
+      localStorage.setItem('dnd_sheet_equipment', JSON.stringify(equipment));
+      localStorage.setItem('dnd_sheet_backpack', JSON.stringify(backpack));
+      localStorage.setItem('dnd_sheet_statuses', JSON.stringify(statuses));
+    }
+
+    function loadAllData() {
+      const savedInputs = JSON.parse(localStorage.getItem('dnd_sheet_inputs') || '{}');
+      const inputs = document.querySelectorAll('.sheet-container input[type="text"], .sheet-container input[type="number"]');
+      inputs.forEach((input, index) => {
+        const key = input.id ? input.id : 'input_' + index;
+        if (savedInputs[key] !== undefined) {
+          if (!['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty'].includes(input.id)) {
+            input.value = savedInputs[key];
+          }
+        }
+      });
+
+      const savedCB = JSON.parse(localStorage.getItem('dnd_sheet_checkboxes') || '[]');
+      const checkboxes = document.querySelectorAll('.sheet-container input[type="checkbox"]');
+      checkboxes.forEach((cb, index) => {
+        if (savedCB[index] !== undefined) {
+          cb.checked = savedCB[index];
+        }
+      });
+
+      equipment = JSON.parse(localStorage.getItem('dnd_sheet_equipment') || '[]');
+      backpack = JSON.parse(localStorage.getItem('dnd_sheet_backpack') || '[]');
+      statuses = JSON.parse(localStorage.getItem('dnd_sheet_statuses') || '[]');
+
+      renderEquipment();
+      renderBackpack();
+      renderStatuses();
+      updateTrackers();
+    }
+
+    // --- CONTADORES DINÁMICOS PARA CÍRCULOS ---
+    function updateTrackers() {
+      const saveBoxes = document.querySelectorAll('.save-cb');
+      const saveChecked = document.querySelectorAll('.save-cb:checked').length;
+      const saveCountElem = document.getElementById('saveCount');
+      if (saveCountElem) {
+        saveCountElem.textContent = saveBoxes.length - saveChecked;
+      }
+
+      const foodBoxes = document.querySelectorAll('.food-cb');
+      const foodChecked = document.querySelectorAll('.food-cb:checked').length;
+      const foodCountElem = document.getElementById('foodCount');
+      if (foodCountElem) {
+        foodCountElem.textContent = foodBoxes.length - foodChecked;
+      }
+    }
+
+    // --- LÓGICA DE ESTADOS / EFECTOS ---
+    function renderStatuses() {
+      const list = document.getElementById('statusList');
+      if (!list) return;
+      list.innerHTML = '';
+      statuses.forEach(status => {
+        const li = document.createElement('li');
+        li.className = 'item-card status-card';
+        
+        const rawDuration = status.duration ? status.duration.trim() : '';
+        const isNumeric = rawDuration !== '' && !isNaN(parseInt(rawDuration));
+        
+        let durationHTML = '';
+        if (isNumeric) {
+          durationHTML = `
+            <div class="item-controls">
+              <button type="button" class="btn-qty" onclick="changeStatusQty(${status.id}, -1)">-</button>
+              <span class="status-badge">⌛ ${rawDuration}</span>
+              <button type="button" class="btn-qty" onclick="changeStatusQty(${status.id}, 1)">+</button>
+            </div>
+          `;
+        } else if (rawDuration !== '') {
+          durationHTML = `<span class="status-badge">⌛ ${rawDuration}</span>`;
+        }
+
+        li.innerHTML = `
+          <span><strong>${status.name}</strong></span>
+          <div class="item-controls">
+            ${durationHTML}
+            <button type="button" class="btn-delete" onclick="deleteStatus(${status.id})">✕</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function addStatus() {
+      const nameInput = document.getElementById('statusName');
+      const durationInput = document.getElementById('statusDuration');
+      if (!nameInput || nameInput.value.trim() === '') return;
+
+      statuses.push({
+        id: Date.now(),
+        name: nameInput.value.trim(),
+        duration: durationInput ? durationInput.value.trim() : ''
+      });
+
+      nameInput.value = '';
+      if (durationInput) durationInput.value = '';
+      renderStatuses();
+      saveAllData();
+    }
+
+    function changeStatusQty(id, delta) {
+      const status = statuses.find(s => s.id === id);
+      if (status) {
+        let current = parseInt(status.duration);
+        if (!isNaN(current)) {
+          current += delta;
+          if (current <= 0) {
+            deleteStatus(id);
+            return;
+          }
+          status.duration = current.toString();
+          renderStatuses();
+          saveAllData();
+        }
+      }
+    }
+
+    function deleteStatus(id) {
+      statuses = statuses.filter(s => s.id !== id);
+      renderStatuses();
+      saveAllData();
+    }
+
+    // --- LÓGICA DE EQUIPAMIENTO Y MOCHILA ---
+    function renderEquipment() {
+      const list = document.getElementById('equipmentList');
+      if (!list) return;
+      list.innerHTML = '';
+      equipment.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'item-card';
+        li.innerHTML = `
+          <span><strong>${item.name}</strong></span>
+          <div class="item-controls">
+            <button type="button" class="btn-qty" onclick="changeQty('equip', ${item.id}, -1)">-</button>
+            <span>x${item.qty}</span>
+            <button type="button" class="btn-qty" onclick="changeQty('equip', ${item.id}, 1)">+</button>
+            <button type="button" class="btn-delete" onclick="deleteItem('equip', ${item.id})">✕</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function addEquipment() {
+      const nameInput = document.getElementById('equipName');
+      const qtyInput = document.getElementById('equipQty');
+      if (!nameInput || nameInput.value.trim() === '') return;
+
+      equipment.push({
+        id: Date.now(),
+        name: nameInput.value.trim(),
+        qty: parseInt(qtyInput ? qtyInput.value : 1) || 1
+      });
+
+      nameInput.value = '';
+      if (qtyInput) qtyInput.value = '1';
+      renderEquipment();
+      saveAllData();
+    }
+
+    function renderBackpack() {
+      const list = document.getElementById('backpackList');
+      if (!list) return;
+      list.innerHTML = '';
+      backpack.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'item-card';
+        li.innerHTML = `
+          <span><strong>${item.name}</strong></span>
+          <div class="item-controls">
+            <button type="button" class="btn-qty" onclick="changeQty('pack', ${item.id}, -1)">-</button>
+            <span>x${item.qty}</span>
+            <button type="button" class="btn-qty" onclick="changeQty('pack', ${item.id}, 1)">+</button>
+            <button type="button" class="btn-delete" onclick="deleteItem('pack', ${item.id})">✕</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function addBackpackItem() {
+      const nameInput = document.getElementById('backpackName');
+      const qtyInput = document.getElementById('backpackQty');
+      if (!nameInput || nameInput.value.trim() === '') return;
+
+      backpack.push({
+        id: Date.now(),
+        name: nameInput.value.trim(),
+        qty: parseInt(qtyInput ? qtyInput.value : 1) || 1
+      });
+
+      nameInput.value = '';
+      if (qtyInput) qtyInput.value = '1';
+      renderBackpack();
+      saveAllData();
+    }
+
+    function changeQty(type, id, delta) {
+      const targetList = type === 'equip' ? equipment : backpack;
+      const render = type === 'equip' ? renderEquipment : renderBackpack;
+      const item = targetList.find(i => i.id === id);
+      if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) {
+          deleteItem(type, id);
+        } else {
+          render();
+          saveAllData();
+        }
+      }
+    }
+
+    function deleteItem(type, id) {
+      if (type === 'equip') {
+        equipment = equipment.filter(i => i.id !== id);
+        renderEquipment();
+      } else {
+        backpack = backpack.filter(i => i.id !== id);
+        renderBackpack();
+      }
+      saveAllData();
+    }
+
+    // --- INICIALIZACIÓN SEGUURA ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAllData();
+
+      document.addEventListener('input', (e) => {
+        if (['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty'].includes(e.target.id)) {
+          return;
+        }
+        saveAllData();
+      });
+
+      document.addEventListener('change', (e) => {
+        saveAllData();
+        if (e.target.classList.contains('save-cb') || e.target.classList.contains('food-cb')) {
+          updateTrackers();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
