@@ -445,3 +445,67 @@ button:hover {
   background: rgba(255, 255, 255, 0.75);
   box-shadow: 0 2px 6px rgba(122, 28, 28, 0.15);
 }
+
+/* Checkbox de datos extras */
+.checkbox-extra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  cursor: pointer;
+  user-select: none;
+  margin-top: 2px;
+}
+
+.extra-fields-container {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--paper-border);
+  margin-top: 6px;
+}
+
+/* Botón pergamino para desplegar info extra del objeto */
+.btn-toggle-info {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 2px;
+  transition: transform 0.2s;
+}
+
+.btn-toggle-info:hover {
+  transform: scale(1.2);
+}
+
+/* Ajustes para integrar el estilo pergamino en select y textarea */
+.extra-fields-container {
+  background: rgba(115, 22, 28, 0.04);
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(115, 22, 28, 0.2);
+}
+
+.extra-fields-container select,
+.extra-fields-container textarea {
+  font-family: inherit;
+  color: #4a154b; /* O el color de texto principal de tu ficha */
+  background-color: #fdfbf7; /* Fondo pergamino claro */
+  border: 1px solid #a67c52;
+  border-radius: 4px;
+  padding: 6px 8px;
+  outline: none;
+}
+
+.extra-fields-container select:focus,
+.extra-fields-container textarea:focus {
+  border-color: #73161c;
+  box-shadow: 0 0 3px rgba(115, 22, 28, 0.3);
+}
+
+.extra-fields-container option {
+  background-color: #fdfbf7;
+  color: #333;
+}

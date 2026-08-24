@@ -166,28 +166,69 @@
           </div>
         </div>
 
-        <!-- EQUIPAMIENTO -->
-        <div class="section">  
-          <h2>Equipamiento</h2>
-          <div class="add-item-form">
-            <input type="text" id="equipName" placeholder="Arma, Armadura...">
-            <input type="number" id="equipQty" class="input-short" value="1" min="1">
-            <button type="button" onclick="addEquipment()">+</button>
-          </div>
-          <ul id="equipmentList" class="item-list"></ul>
-        </div>
+      <!-- PANEL EQUIPAMIENTO -->
+<div class="panel">
+  <h2>Equipamiento</h2>
+  <div class="item-input-container">
+    <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
+      <input type="text" id="equipName" placeholder="Arma, Armadura..." style="flex: 2;">
+      <input type="number" id="equipQty" value="1" min="1" style="flex: 0.8; text-align: center;">
+      <button type="button" class="btn-primary" onclick="addEquipment()" style="padding: 0 16px;">+</button>
+    </div>
+    
+    <!-- Checkbox para datos adicionales -->
+    <label class="checkbox-extra">
+      <input type="checkbox" id="equipHasDetails" onchange="toggleExtraFields('equip')">
+      <span>Agregar efectos / detalles adicionales</span>
+    </label>
 
-        <!-- MOCHILA -->
-        <div class="section">
-          <h2>Mochila</h2>
-          <div class="add-item-form">
-            <input type="text" id="backpackName" placeholder="Objeto...">
-            <input type="number" id="backpackQty" class="input-short" value="1" min="1">
-            <button type="button" onclick="addBackpackItem()">+</button>
-          </div>
-          <ul id="backpackList" class="item-list"></ul>
-        </div>
-      </div>
+   <!-- CAMPOS EXTRAS EQUIPAMIENTO -->
+<div id="equipExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
+  <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+    <select id="equipEffectType" class="input-custom" style="flex: 1;">
+      <option value="Pasiva">Efecto Pasivo</option>
+      <option value="Activa">Efecto Activo</option>
+      <option value="Notas">Notas / Lore</option>
+    </select>
+  </div>
+  <textarea id="equipDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
+</div>
+  </div>
+
+  <div id="equipmentList" class="items-list" style="margin-top: 10px;"></div>
+</div>
+
+<!-- PANEL MOCHILA -->
+<div class="panel">
+  <h2>Mochila</h2>
+  <div class="item-input-container">
+    <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
+      <input type="text" id="bagName" placeholder="Objeto..." style="flex: 2;">
+      <input type="number" id="bagQty" value="1" min="1" style="flex: 0.8; text-align: center;">
+      <button type="button" class="btn-primary" onclick="addBagItem()" style="padding: 0 16px;">+</button>
+    </div>
+
+    <!-- Checkbox para datos adicionales -->
+    <label class="checkbox-extra">
+      <input type="checkbox" id="bagHasDetails" onchange="toggleExtraFields('bag')">
+      <span>Agregar efectos / detalles adicionales</span>
+    </label>
+
+    <!-- Campos adicionales (ocultos por defecto) -->
+  <div id="bagExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
+  <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+    <select id="bagEffectType" class="input-custom" style="flex: 1;">
+      <option value="Pasiva">Efecto Pasivo</option>
+      <option value="Activa">Efecto Activo</option>
+      <option value="Notas">Notas / Lore</option>
+    </select>
+  </div>
+  <textarea id="bagDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
+</div>
+  </div>
+
+  <div id="bagList" class="items-list" style="margin-top: 10px;"></div>
+</div>
 
      <!-- ================= CARA POSTERIOR (HABILIDADES) ================= -->
 <div class="sheet-face back">
@@ -527,107 +568,116 @@ function addSkill() {
       saveAllData();
     }
 
-    // --- EQUIPO Y MOCHILA ---
-    function renderEquipment() {
-      const list = document.getElementById('equipmentList');
-      if (!list) return;
-      list.innerHTML = '';
-      equipment.forEach(item => {
-        const li = document.createElement('li');
-        li.className = 'item-card';
-        li.innerHTML = `
-          <span><strong>${item.name}</strong></span>
-          <div class="item-controls">
-            <button type="button" class="btn-qty" onclick="changeQty('equip', ${item.id}, -1)">-</button>
-            <span>x${item.qty}</span>
-            <button type="button" class="btn-qty" onclick="changeQty('equip', ${item.id}, 1)">+</button>
-            <button type="button" class="btn-delete" onclick="deleteItem('equip', ${item.id})">✕</button>
-          </div>
-        `;
-        list.appendChild(li);
-      });
-    }
+    // Mostrar / ocultar campos extras según el checkbox
+function toggleExtraFields(prefix) {
+  const check = document.getElementById(`${prefix}HasDetails`);
+  const container = document.getElementById(`${prefix}ExtraFields`);
+  if (check && container) {
+    container.style.display = check.checked ? 'block' : 'none';
+  }
+}
 
-    function addEquipment() {
-      const nameInput = document.getElementById('equipName');
-      const qtyInput = document.getElementById('equipQty');
-      if (!nameInput || nameInput.value.trim() === '') return;
+// Alternar el desplegable de detalles en la lista
+function toggleItemDetails(elementId) {
+  const detailsDiv = document.getElementById(elementId);
+  if (detailsDiv) {
+    detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+  }
+}
 
-      equipment.push({
-        id: Date.now(),
-        name: nameInput.value.trim(),
-        qty: parseInt(qtyInput ? qtyInput.value : 1) || 1
-      });
+// --- RENDERING DE OBJETOS (MOCHILA Y EQUIPAMIENTO) ---
+function renderItemsList(itemsArray, listContainerId, storageKey) {
+  const container = document.getElementById(listContainerId);
+  if (!container) return;
+  container.innerHTML = '';
 
-      nameInput.value = '';
-      if (qtyInput) qtyInput.value = '1';
-      renderEquipment();
-      saveAllData();
-    }
+  itemsArray.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'item-card-wrapper';
 
-    function renderBackpack() {
-      const list = document.getElementById('backpackList');
-      if (!list) return;
-      list.innerHTML = '';
-      backpack.forEach(item => {
-        const li = document.createElement('li');
-        li.className = 'item-card';
-        li.innerHTML = `
-          <span><strong>${item.name}</strong></span>
-          <div class="item-controls">
-            <button type="button" class="btn-qty" onclick="changeQty('pack', ${item.id}, -1)">-</button>
-            <span>x${item.qty}</span>
-            <button type="button" class="btn-qty" onclick="changeQty('pack', ${item.id}, 1)">+</button>
-            <button type="button" class="btn-delete" onclick="deleteItem('pack', ${item.id})">✕</button>
-          </div>
-        `;
-        list.appendChild(li);
-      });
-    }
+    const hasDetails = item.desc && item.desc.trim() !== '';
+    const detailsId = `item-desc-${storageKey}-${index}`;
 
-    function addBackpackItem() {
-      const nameInput = document.getElementById('backpackName');
-      const qtyInput = document.getElementById('backpackQty');
-      if (!nameInput || nameInput.value.trim() === '') return;
+    card.innerHTML = `
+      <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          ${hasDetails ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')">📜</button>` : ''}
+          <span style="font-weight: bold; font-family: var(--font-heading); text-transform: uppercase;">${item.name}</span>
+          ${hasDetails && item.effectType ? `<span class="badge-type ${item.effectType.toLowerCase()}">${item.effectType}</span>` : ''}
+        </div>
 
-      backpack.push({
-        id: Date.now(),
-        name: nameInput.value.trim(),
-        qty: parseInt(qtyInput ? qtyInput.value : 1) || 1
-      });
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, -1)">–</button>
+          <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
+          <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, 1)">+</button>
+          <button type="button" class="btn-delete" onclick="deleteItem('${storageKey}', ${index})">✕</button>
+        </div>
+      </div>
 
-      nameInput.value = '';
-      if (qtyInput) qtyInput.value = '1';
-      renderBackpack();
-      saveAllData();
-    }
+      ${hasDetails ? `
+        <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 6px 10px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); border-radius: 0 0 4px 4px; font-size: 0.85rem;">
+          ${item.desc}
+        </div>
+      ` : ''}
+    `;
+    container.appendChild(card);
+  });
+}
 
-    function changeQty(type, id, delta) {
-      const targetList = type === 'equip' ? equipment : backpack;
-      const render = type === 'equip' ? renderEquipment : renderBackpack;
-      const item = targetList.find(i => i.id === id);
-      if (item) {
-        item.qty += delta;
-        if (item.qty <= 0) {
-          deleteItem(type, id);
-        } else {
-          render();
-          saveAllData();
-        }
-      }
-    }
+// --- FUNCIONES PARA AGREGAR EQUIPAMIENTO Y MOCHILA ---
+function addEquipment() {
+  const nameInput = document.getElementById('equipName');
+  const qtyInput = document.getElementById('equipQty');
+  const hasDetails = document.getElementById('equipHasDetails').checked;
+  const effectType = document.getElementById('equipEffectType').value;
+  const descInput = document.getElementById('equipDesc');
 
-    function deleteItem(type, id) {
-      if (type === 'equip') {
-        equipment = equipment.filter(i => i.id !== id);
-        renderEquipment();
-      } else {
-        backpack = backpack.filter(i => i.id !== id);
-        renderBackpack();
-      }
-      saveAllData();
-    }
+  if (!nameInput || nameInput.value.trim() === '') return;
 
+  equipment.push({
+    name: nameInput.value.trim(),
+    qty: parseInt(qtyInput.value) || 1,
+    effectType: hasDetails ? effectType : null,
+    desc: hasDetails ? descInput.value.trim() : ''
+  });
+
+  // Limpiar campos
+  nameInput.value = '';
+  qtyInput.value = '1';
+  descInput.value = '';
+  document.getElementById('equipHasDetails').checked = false;
+  toggleExtraFields('equip');
+
+  renderEquipment();
+  saveAllData();
+}
+
+function addBagItem() {
+  const nameInput = document.getElementById('bagName');
+  const qtyInput = document.getElementById('bagQty');
+  const hasDetails = document.getElementById('bagHasDetails').checked;
+  const effectType = document.getElementById('bagEffectType').value;
+  const descInput = document.getElementById('bagDesc');
+
+  if (!nameInput || nameInput.value.trim() === '') return;
+
+  bag.push({
+    name: nameInput.value.trim(),
+    qty: parseInt(qtyInput.value) || 1,
+    effectType: hasDetails ? effectType : null,
+    desc: hasDetails ? descInput.value.trim() : ''
+  });
+
+  // Limpiar campos
+  nameInput.value = '';
+  qtyInput.value = '1';
+  descInput.value = '';
+  document.getElementById('bagHasDetails').checked = false;
+  toggleExtraFields('bag');
+
+  renderBag();
+  saveAllData();
+}
     // --- IMPORTAR & EXPORTAR ---
     function exportCharacter() {
       saveAllData();
