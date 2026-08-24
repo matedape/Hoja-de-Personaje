@@ -166,129 +166,130 @@
           </div>
         </div>
 
-      <!-- PANEL EQUIPAMIENTO -->
-<div class="panel">
-  <h2>Equipamiento</h2>
-  <div class="item-input-container">
-    <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
-      <input type="text" id="equipName" placeholder="Arma, Armadura..." style="flex: 2;">
-      <input type="number" id="equipQty" value="1" min="1" style="flex: 0.8; text-align: center;">
-      <button type="button" class="btn-primary" onclick="addEquipment()" style="padding: 0 16px;">+</button>
+        <!-- PANEL EQUIPAMIENTO -->
+        <div class="panel">
+          <h2>Equipamiento</h2>
+          <div class="item-input-container">
+            <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
+              <input type="text" id="equipName" placeholder="Arma, Armadura..." style="flex: 2;">
+              <input type="number" id="equipQty" value="1" min="1" style="flex: 0.8; text-align: center;">
+              <button type="button" class="btn-primary" onclick="addEquipment()" style="padding: 0 16px;">+</button>
+            </div>
+            
+            <label class="checkbox-extra">
+              <input type="checkbox" id="equipHasDetails" onchange="toggleExtraFields('equip')">
+              <span>Agregar efectos / detalles adicionales</span>
+            </label>
+
+            <div id="equipExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
+              <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                <select id="equipEffectType" class="input-custom" style="flex: 1;">
+                  <option value="Pasiva">Efecto Pasivo</option>
+                  <option value="Activa">Efecto Activo</option>
+                  <option value="Notas">Notas / Lore</option>
+                </select>
+              </div>
+              <textarea id="equipDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
+            </div>
+          </div>
+
+          <div id="equipmentList" class="items-list" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- PANEL MOCHILA -->
+        <div class="panel">
+          <h2>Mochila</h2>
+          <div class="item-input-container">
+            <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
+              <input type="text" id="bagName" placeholder="Objeto..." style="flex: 2;">
+              <input type="number" id="bagQty" value="1" min="1" style="flex: 0.8; text-align: center;">
+              <button type="button" class="btn-primary" onclick="addBagItem()" style="padding: 0 16px;">+</button>
+            </div>
+
+            <label class="checkbox-extra">
+              <input type="checkbox" id="bagHasDetails" onchange="toggleExtraFields('bag')">
+              <span>Agregar efectos / detalles adicionales</span>
+            </label>
+
+            <div id="bagExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
+              <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                <select id="bagEffectType" class="input-custom" style="flex: 1;">
+                  <option value="Pasiva">Efecto Pasivo</option>
+                  <option value="Activa">Efecto Activo</option>
+                  <option value="Notas">Notas / Lore</option>
+                </select>
+              </div>
+              <textarea id="bagDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
+            </div>
+          </div>
+
+          <div id="bagList" class="items-list" style="margin-top: 10px;"></div>
+        </div>
+
+      </div> <!-- FIN DE LA CARA FRONTAL -->
+
+
+      <!-- ================= CARA POSTERIOR (HABILIDADES) ================= -->
+      <div class="sheet-face back">
+        <div class="header-actions">
+          <button type="button" class="btn-action" onclick="toggleSheetFace()">
+            📄 Ver Ficha Principal
+          </button>
+
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="btn-action" onclick="exportCharacter()" title="Descargar personaje en JSON">
+              📥 Exportar
+            </button>
+            <button type="button" class="btn-action" onclick="triggerImport()" title="Cargar personaje desde JSON">
+              📤 Importar
+            </button>
+          </div>
+        </div>
+
+        <h2>Habilidades y Hechizos</h2>
+        
+        <div class="section" style="margin-bottom: 15px;">
+          <div class="form-group">
+            <label>Nombre de la Habilidad</label>
+            <input type="text" id="skillName" placeholder="Ej: Bola de Fuego">
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Tipo</label>
+              <select id="skillType" class="skill-select">
+                <option value="Activa">Activa</option>
+                <option value="Pasiva">Pasiva</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Reutilización / Cooldown (Opcional)</label>
+              <input type="text" id="skillCooldown" placeholder="Ej: 2 turnos, 1/Descanso">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Funcionamiento / Descripción</label>
+            <textarea id="skillDesc" class="skill-textarea" placeholder="Escribe el alcance, daño, costo, etc."></textarea>
+          </div>
+
+          <button type="button" id="btnSaveSkill" class="btn-action" onclick="addSkill()" style="margin-top: 6px;">
+            + Agregar Habilidad
+          </button>
+        </div>
+
+        <div class="section">
+          <div class="form-group search-box">
+            <label>🔍 Buscar Habilidad</label>
+            <input type="text" id="skillSearch" placeholder="Escribe para filtrar..." oninput="renderSkills()">
+          </div>
+
+          <div id="skillsList"></div>
+        </div>
+      </div> <!-- FIN DE LA CARA POSTERIOR -->
+
     </div>
-    
-    <!-- Checkbox para datos adicionales -->
-    <label class="checkbox-extra">
-      <input type="checkbox" id="equipHasDetails" onchange="toggleExtraFields('equip')">
-      <span>Agregar efectos / detalles adicionales</span>
-    </label>
-
-   <!-- CAMPOS EXTRAS EQUIPAMIENTO -->
-<div id="equipExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
-  <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-    <select id="equipEffectType" class="input-custom" style="flex: 1;">
-      <option value="Pasiva">Efecto Pasivo</option>
-      <option value="Activa">Efecto Activo</option>
-      <option value="Notas">Notas / Lore</option>
-    </select>
   </div>
-  <textarea id="equipDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
-</div>
-  </div>
-
-  <div id="equipmentList" class="items-list" style="margin-top: 10px;"></div>
-</div>
-
-<!-- PANEL MOCHILA -->
-<div class="panel">
-  <h2>Mochila</h2>
-  <div class="item-input-container">
-    <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
-      <input type="text" id="bagName" placeholder="Objeto..." style="flex: 2;">
-      <input type="number" id="bagQty" value="1" min="1" style="flex: 0.8; text-align: center;">
-      <button type="button" class="btn-primary" onclick="addBagItem()" style="padding: 0 16px;">+</button>
-    </div>
-
-    <!-- Checkbox para datos adicionales -->
-    <label class="checkbox-extra">
-      <input type="checkbox" id="bagHasDetails" onchange="toggleExtraFields('bag')">
-      <span>Agregar efectos / detalles adicionales</span>
-    </label>
-
-    <!-- Campos adicionales (ocultos por defecto) -->
-  <div id="bagExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
-  <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-    <select id="bagEffectType" class="input-custom" style="flex: 1;">
-      <option value="Pasiva">Efecto Pasivo</option>
-      <option value="Activa">Efecto Activo</option>
-      <option value="Notas">Notas / Lore</option>
-    </select>
-  </div>
-  <textarea id="bagDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
-</div>
-  </div>
-
-  <div id="bagList" class="items-list" style="margin-top: 10px;"></div>
-</div>
-
-     <!-- ================= CARA POSTERIOR (HABILIDADES) ================= -->
-<div class="sheet-face back">
-  <div class="header-actions">
-    <button type="button" class="btn-action" onclick="toggleSheetFace()">
-      📄 Ver Ficha Principal
-    </button>
-
-    <div style="display: flex; gap: 6px;">
-      <button type="button" class="btn-action" onclick="exportCharacter()" title="Descargar personaje en JSON">
-        📥 Exportar
-      </button>
-      <button type="button" class="btn-action" onclick="triggerImport()" title="Cargar personaje desde JSON">
-        📤 Importar
-      </button>
-    </div>
-  </div>
-
-  <h2>Habilidades y Hechizos</h2>
-  
-  <div class="section" style="margin-bottom: 15px;">
-    <div class="form-group">
-      <label>Nombre de la Habilidad</label>
-      <input type="text" id="skillName" placeholder="Ej: Bola de Fuego">
-    </div>
-
-    <!-- NUEVO: TIPO Y REUTILIZACIÓN EN PARALELO -->
-    <div class="grid-2">
-      <div class="form-group">
-        <label>Tipo</label>
-        <select id="skillType" class="skill-select">
-          <option value="Activa">Activa</option>
-          <option value="Pasiva">Pasiva</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Reutilización / Cooldown (Opcional)</label>
-        <input type="text" id="skillCooldown" placeholder="Ej: 2 turnos, 1/Descanso">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Funcionamiento / Descripción</label>
-      <textarea id="skillDesc" class="skill-textarea" placeholder="Escribe el alcance, daño, costo, etc."></textarea>
-    </div>
-
-    <button type="button" id="btnSaveSkill" class="btn-action" onclick="addSkill()" style="margin-top: 6px;">
-      + Agregar Habilidad
-    </button>
-  </div>
-
-  <div class="section">
-    <div class="form-group search-box">
-      <label>🔍 Buscar Habilidad</label>
-      <input type="text" id="skillSearch" placeholder="Escribe para filtrar..." oninput="renderSkills()">
-    </div>
-
-    <div id="skillsList"></div>
-  </div>
-</div>
 
   <!-- INPUT OCULTO COMPARTIDO PARA IMPORTAR -->
   <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importCharacter(event)">
@@ -298,6 +299,7 @@
     let backpack = [];
     let statuses = [];
     let skills = [];
+    let editingSkillId = null;
 
     // --- ANIMACIÓN FLIP 3D ---
     function toggleSheetFace() {
@@ -331,7 +333,7 @@
       inputs.forEach((input, index) => {
         const key = input.id ? input.id : 'input_' + index;
         if (savedInputs[key] !== undefined) {
-          if (!['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty', 'skillName', 'skillSearch'].includes(input.id)) {
+          if (!['statusName', 'statusDuration', 'equipName', 'equipQty', 'bagName', 'bagQty', 'skillName', 'skillSearch', 'skillCooldown'].includes(input.id)) {
             input.value = savedInputs[key];
           }
         }
@@ -357,121 +359,132 @@
       updateTrackers();
     }
 
-// Variable para saber si estamos editando
-let editingSkillId = null;
+    // --- HABILIDADES & BUSCADOR ---
+    function renderSkills() {
+      const list = document.getElementById('skillsList');
+      const searchInput = document.getElementById('skillSearch');
+      if (!list) return;
 
-// --- HABILIDADES, FAVORITOS & BUSCADOR ---
-function renderSkills() {
-  const list = document.getElementById('skillsList');
-  const searchInput = document.getElementById('skillSearch');
-  if (!list) return;
+      const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      list.innerHTML = '';
 
-  const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
-  list.innerHTML = '';
+      const sortedSkills = [...skills].sort((a, b) => {
+        if (a.isFavorite === b.isFavorite) return 0;
+        return a.isFavorite ? -1 : 1;
+      });
 
-  // Ordenamos las habilidades: Primero las Favoritas (isFavorite === true), luego por ID/Creación
-  const sortedSkills = [...skills].sort((a, b) => {
-    if (a.isFavorite === b.isFavorite) return 0;
-    return a.isFavorite ? -1 : 1;
-  });
+      const filteredSkills = sortedSkills.filter(skill => 
+        skill.name.toLowerCase().includes(filter) || 
+        skill.desc.toLowerCase().includes(filter) ||
+        (skill.type && skill.type.toLowerCase().includes(filter))
+      );
 
-  const filteredSkills = sortedSkills.filter(skill => 
-    skill.name.toLowerCase().includes(filter) || 
-    skill.desc.toLowerCase().includes(filter) ||
-    (skill.type && skill.type.toLowerCase().includes(filter))
-  );
+      if (filteredSkills.length === 0) {
+        list.innerHTML = '<p style="font-style: italic; font-size: 0.85rem; text-align: center; color: var(--accent-color);">No hay habilidades que coincidan.</p>';
+        return;
+      }
 
-  if (filteredSkills.length === 0) {
-    list.innerHTML = '<p style="font-style: italic; font-size: 0.85rem; text-align: center; color: var(--accent-color);">No hay habilidades que coincidan.</p>';
-    return;
-  }
+      filteredSkills.forEach(skill => {
+        const card = document.createElement('div');
+        card.className = `skill-card ${skill.isFavorite ? 'favorite-card' : ''}`;
 
-  filteredSkills.forEach(skill => {
-    const card = document.createElement('div');
-    // Agregamos la clase 'favorite-card' si está en favoritos para aplicarle estilos especiales
-    card.className = `skill-card ${skill.isFavorite ? 'favorite-card' : ''}`;
+        const typeClass = (skill.type || 'Activa').toLowerCase();
+        const cooldownHTML = skill.cooldown && skill.cooldown.trim() !== '' 
+          ? `<span class="badge-cooldown">⏳ ${skill.cooldown}</span>` 
+          : '';
 
-    const typeClass = (skill.type || 'Activa').toLowerCase();
-    const cooldownHTML = skill.cooldown && skill.cooldown.trim() !== '' 
-      ? `<span class="badge-cooldown">⏳ ${skill.cooldown}</span>` 
-      : '';
+        const starIcon = skill.isFavorite ? '★' : '☆';
+        const starTitle = skill.isFavorite ? 'Quitar de favoritos' : 'Marcar como favorito';
 
-    // Ícono de estrella según si es favorito o no
-    const starIcon = skill.isFavorite ? '★' : '☆';
-    const starTitle = skill.isFavorite ? 'Quitar de favoritos' : 'Marcar como favorito';
-
-    card.innerHTML = `
-      <div class="skill-card-header">
-        <div class="skill-badges">
-          <button type="button" class="btn-fav ${skill.isFavorite ? 'active' : ''}" onclick="toggleFavoriteSkill(${skill.id})" title="${starTitle}">
-            ${starIcon}
-          </button>
-          <span class="skill-card-title">${skill.name}</span>
-          <span class="badge-type ${typeClass}">${skill.type || 'Activa'}</span>
-          ${cooldownHTML}
-        </div>
-        <div style="display: flex; gap: 4px;">
-          <button type="button" class="btn-qty" onclick="editSkill(${skill.id})" title="Editar habilidad">✏️</button>
-          <button type="button" class="btn-delete" onclick="deleteSkill(${skill.id})" title="Borrar habilidad">✕</button>
-        </div>
-      </div>
-      <div class="skill-card-desc">${skill.desc}</div>
-    `;
-    list.appendChild(card);
-  });
-}
-
-function toggleFavoriteSkill(id) {
-  const skill = skills.find(s => s.id === id);
-  if (skill) {
-    skill.isFavorite = !skill.isFavorite;
-    renderSkills();
-    saveAllData();
-  }
-}
-
-function addSkill() {
-  const nameInput = document.getElementById('skillName');
-  const typeSelect = document.getElementById('skillType');
-  const cooldownInput = document.getElementById('skillCooldown');
-  const descInput = document.getElementById('skillDesc');
-
-  if (!nameInput || nameInput.value.trim() === '') return;
-
-  if (editingSkillId !== null) {
-    // Editar existente
-    const skill = skills.find(s => s.id === editingSkillId);
-    if (skill) {
-      skill.name = nameInput.value.trim();
-      skill.type = typeSelect ? typeSelect.value : 'Activa';
-      skill.cooldown = cooldownInput ? cooldownInput.value.trim() : '';
-      skill.desc = descInput ? descInput.value.trim() : '';
+        card.innerHTML = `
+          <div class="skill-card-header">
+            <div class="skill-badges">
+              <button type="button" class="btn-fav ${skill.isFavorite ? 'active' : ''}" onclick="toggleFavoriteSkill(${skill.id})" title="${starTitle}">
+                ${starIcon}
+              </button>
+              <span class="skill-card-title">${skill.name}</span>
+              <span class="badge-type ${typeClass}">${skill.type || 'Activa'}</span>
+              ${cooldownHTML}
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <button type="button" class="btn-qty" onclick="editSkill(${skill.id})" title="Editar habilidad">✏️</button>
+              <button type="button" class="btn-delete" onclick="deleteSkill(${skill.id})" title="Borrar habilidad">✕</button>
+            </div>
+          </div>
+          <div class="skill-card-desc">${skill.desc}</div>
+        `;
+        list.appendChild(card);
+      });
     }
-    editingSkillId = null;
-    
-    const addBtn = document.getElementById('btnSaveSkill');
-    if (addBtn) addBtn.textContent = '+ Agregar Habilidad';
-  } else {
-    // Crear nueva (por defecto no es favorita)
-    skills.push({
-      id: Date.now(),
-      name: nameInput.value.trim(),
-      type: typeSelect ? typeSelect.value : 'Activa',
-      cooldown: cooldownInput ? cooldownInput.value.trim() : '',
-      desc: descInput ? descInput.value.trim() : '',
-      isFavorite: false
-    });
-  }
 
-  // Limpiar campos
-  nameInput.value = '';
-  if (cooldownInput) cooldownInput.value = '';
-  if (descInput) descInput.value = '';
-  if (typeSelect) typeSelect.value = 'Activa';
+    function toggleFavoriteSkill(id) {
+      const skill = skills.find(s => s.id === id);
+      if (skill) {
+        skill.isFavorite = !skill.isFavorite;
+        renderSkills();
+        saveAllData();
+      }
+    }
 
-  renderSkills();
-  saveAllData();
-}
+    function addSkill() {
+      const nameInput = document.getElementById('skillName');
+      const typeSelect = document.getElementById('skillType');
+      const cooldownInput = document.getElementById('skillCooldown');
+      const descInput = document.getElementById('skillDesc');
+
+      if (!nameInput || nameInput.value.trim() === '') return;
+
+      if (editingSkillId !== null) {
+        const skill = skills.find(s => s.id === editingSkillId);
+        if (skill) {
+          skill.name = nameInput.value.trim();
+          skill.type = typeSelect ? typeSelect.value : 'Activa';
+          skill.cooldown = cooldownInput ? cooldownInput.value.trim() : '';
+          skill.desc = descInput ? descInput.value.trim() : '';
+        }
+        editingSkillId = null;
+        
+        const addBtn = document.getElementById('btnSaveSkill');
+        if (addBtn) addBtn.textContent = '+ Agregar Habilidad';
+      } else {
+        skills.push({
+          id: Date.now(),
+          name: nameInput.value.trim(),
+          type: typeSelect ? typeSelect.value : 'Activa',
+          cooldown: cooldownInput ? cooldownInput.value.trim() : '',
+          desc: descInput ? descInput.value.trim() : '',
+          isFavorite: false
+        });
+      }
+
+      nameInput.value = '';
+      if (cooldownInput) cooldownInput.value = '';
+      if (descInput) descInput.value = '';
+      if (typeSelect) typeSelect.value = 'Activa';
+
+      renderSkills();
+      saveAllData();
+    }
+
+    function editSkill(id) {
+      const skill = skills.find(s => s.id === id);
+      if (!skill) return;
+
+      document.getElementById('skillName').value = skill.name;
+      document.getElementById('skillType').value = skill.type || 'Activa';
+      document.getElementById('skillCooldown').value = skill.cooldown || '';
+      document.getElementById('skillDesc').value = skill.desc || '';
+
+      editingSkillId = id;
+      const addBtn = document.getElementById('btnSaveSkill');
+      if (addBtn) addBtn.textContent = '💾 Guardar Cambios';
+    }
+
+    function deleteSkill(id) {
+      skills = skills.filter(s => s.id !== id);
+      renderSkills();
+      saveAllData();
+    }
 
     // --- CONTADORES ---
     function updateTrackers() {
@@ -568,116 +581,144 @@ function addSkill() {
       saveAllData();
     }
 
-    // Mostrar / ocultar campos extras según el checkbox
-function toggleExtraFields(prefix) {
-  const check = document.getElementById(`${prefix}HasDetails`);
-  const container = document.getElementById(`${prefix}ExtraFields`);
-  if (check && container) {
-    container.style.display = check.checked ? 'block' : 'none';
-  }
-}
+    // --- RENDERING Y GESTIÓN DE EQUIPAMIENTO Y MOCHILA ---
+    function toggleExtraFields(prefix) {
+      const check = document.getElementById(`${prefix}HasDetails`);
+      const container = document.getElementById(`${prefix}ExtraFields`);
+      if (check && container) {
+        container.style.display = check.checked ? 'block' : 'none';
+      }
+    }
 
-// Alternar el desplegable de detalles en la lista
-function toggleItemDetails(elementId) {
-  const detailsDiv = document.getElementById(elementId);
-  if (detailsDiv) {
-    detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
-  }
-}
+    function toggleItemDetails(elementId) {
+      const detailsDiv = document.getElementById(elementId);
+      if (detailsDiv) {
+        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+      }
+    }
 
-// --- RENDERING DE OBJETOS (MOCHILA Y EQUIPAMIENTO) ---
-function renderItemsList(itemsArray, listContainerId, storageKey) {
-  const container = document.getElementById(listContainerId);
-  if (!container) return;
-  container.innerHTML = '';
+    function renderItemsList(itemsArray, listContainerId, storageKey) {
+      const container = document.getElementById(listContainerId);
+      if (!container) return;
+      container.innerHTML = '';
 
-  itemsArray.forEach((item, index) => {
-    const card = document.createElement('div');
-    card.className = 'item-card-wrapper';
+      itemsArray.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'item-card-wrapper';
 
-    const hasDetails = item.desc && item.desc.trim() !== '';
-    const detailsId = `item-desc-${storageKey}-${index}`;
+        const hasDetails = item.desc && item.desc.trim() !== '';
+        const detailsId = `item-desc-${storageKey}-${index}`;
 
-    card.innerHTML = `
-      <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          ${hasDetails ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')">📜</button>` : ''}
-          <span style="font-weight: bold; font-family: var(--font-heading); text-transform: uppercase;">${item.name}</span>
-          ${hasDetails && item.effectType ? `<span class="badge-type ${item.effectType.toLowerCase()}">${item.effectType}</span>` : ''}
-        </div>
+        card.innerHTML = `
+          <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              ${hasDetails ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')">📜</button>` : ''}
+              <span style="font-weight: bold; font-family: var(--font-heading); text-transform: uppercase;">${item.name}</span>
+              ${hasDetails && item.effectType ? `<span class="badge-type ${item.effectType.toLowerCase()}">${item.effectType}</span>` : ''}
+            </div>
 
-        <div style="display: flex; align-items: center; gap: 4px;">
-          <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, -1)">–</button>
-          <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
-          <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, 1)">+</button>
-          <button type="button" class="btn-delete" onclick="deleteItem('${storageKey}', ${index})">✕</button>
-        </div>
-      </div>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, -1)">–</button>
+              <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
+              <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, 1)">+</button>
+              <button type="button" class="btn-delete" onclick="deleteItem('${storageKey}', ${index})">✕</button>
+            </div>
+          </div>
 
-      ${hasDetails ? `
-        <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 6px 10px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); border-radius: 0 0 4px 4px; font-size: 0.85rem;">
-          ${item.desc}
-        </div>
-      ` : ''}
-    `;
-    container.appendChild(card);
-  });
-}
+          ${hasDetails ? `
+            <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 6px 10px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); border-radius: 0 0 4px 4px; font-size: 0.85rem;">
+              ${item.desc}
+            </div>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
 
-// --- FUNCIONES PARA AGREGAR EQUIPAMIENTO Y MOCHILA ---
-function addEquipment() {
-  const nameInput = document.getElementById('equipName');
-  const qtyInput = document.getElementById('equipQty');
-  const hasDetails = document.getElementById('equipHasDetails').checked;
-  const effectType = document.getElementById('equipEffectType').value;
-  const descInput = document.getElementById('equipDesc');
+    function renderEquipment() {
+      renderItemsList(equipment, 'equipmentList', 'equip');
+    }
 
-  if (!nameInput || nameInput.value.trim() === '') return;
+    function renderBackpack() {
+      renderItemsList(backpack, 'bagList', 'backpack');
+    }
 
-  equipment.push({
-    name: nameInput.value.trim(),
-    qty: parseInt(qtyInput.value) || 1,
-    effectType: hasDetails ? effectType : null,
-    desc: hasDetails ? descInput.value.trim() : ''
-  });
+    function addEquipment() {
+      const nameInput = document.getElementById('equipName');
+      const qtyInput = document.getElementById('equipQty');
+      const hasDetails = document.getElementById('equipHasDetails').checked;
+      const effectType = document.getElementById('equipEffectType').value;
+      const descInput = document.getElementById('equipDesc');
 
-  // Limpiar campos
-  nameInput.value = '';
-  qtyInput.value = '1';
-  descInput.value = '';
-  document.getElementById('equipHasDetails').checked = false;
-  toggleExtraFields('equip');
+      if (!nameInput || nameInput.value.trim() === '') return;
 
-  renderEquipment();
-  saveAllData();
-}
+      equipment.push({
+        name: nameInput.value.trim(),
+        qty: parseInt(qtyInput.value) || 1,
+        effectType: hasDetails ? effectType : null,
+        desc: hasDetails ? descInput.value.trim() : ''
+      });
 
-function addBagItem() {
-  const nameInput = document.getElementById('bagName');
-  const qtyInput = document.getElementById('bagQty');
-  const hasDetails = document.getElementById('bagHasDetails').checked;
-  const effectType = document.getElementById('bagEffectType').value;
-  const descInput = document.getElementById('bagDesc');
+      nameInput.value = '';
+      qtyInput.value = '1';
+      descInput.value = '';
+      document.getElementById('equipHasDetails').checked = false;
+      toggleExtraFields('equip');
 
-  if (!nameInput || nameInput.value.trim() === '') return;
+      renderEquipment();
+      saveAllData();
+    }
 
-  bag.push({
-    name: nameInput.value.trim(),
-    qty: parseInt(qtyInput.value) || 1,
-    effectType: hasDetails ? effectType : null,
-    desc: hasDetails ? descInput.value.trim() : ''
-  });
+    function addBagItem() {
+      const nameInput = document.getElementById('bagName');
+      const qtyInput = document.getElementById('bagQty');
+      const hasDetails = document.getElementById('bagHasDetails').checked;
+      const effectType = document.getElementById('bagEffectType').value;
+      const descInput = document.getElementById('bagDesc');
 
-  // Limpiar campos
-  nameInput.value = '';
-  qtyInput.value = '1';
-  descInput.value = '';
-  document.getElementById('bagHasDetails').checked = false;
-  toggleExtraFields('bag');
+      if (!nameInput || nameInput.value.trim() === '') return;
 
-  renderBag();
-  saveAllData();
-}
+      backpack.push({
+        name: nameInput.value.trim(),
+        qty: parseInt(qtyInput.value) || 1,
+        effectType: hasDetails ? effectType : null,
+        desc: hasDetails ? descInput.value.trim() : ''
+      });
+
+      nameInput.value = '';
+      qtyInput.value = '1';
+      descInput.value = '';
+      document.getElementById('bagHasDetails').checked = false;
+      toggleExtraFields('bag');
+
+      renderBackpack();
+      saveAllData();
+    }
+
+    function changeItemQty(storageKey, index, delta) {
+      const list = storageKey === 'equip' ? equipment : backpack;
+      if (list[index]) {
+        list[index].qty += delta;
+        if (list[index].qty <= 0) {
+          list.splice(index, 1);
+        }
+        if (storageKey === 'equip') renderEquipment();
+        else renderBackpack();
+        saveAllData();
+      }
+    }
+
+    function deleteItem(storageKey, index) {
+      if (storageKey === 'equip') {
+        equipment.splice(index, 1);
+        renderEquipment();
+      } else {
+        backpack.splice(index, 1);
+        renderBackpack();
+      }
+      saveAllData();
+    }
+
     // --- IMPORTAR & EXPORTAR ---
     function exportCharacter() {
       saveAllData();
@@ -738,8 +779,8 @@ function addBagItem() {
       loadAllData();
 
       document.addEventListener('input', (e) => {
-        if (['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty', 'skillName', 'skillDesc', 'skillSearch', 'skillCooldown'].includes(e.target.id)) {
-      return;
+        if (['statusName', 'statusDuration', 'equipName', 'equipQty', 'bagName', 'bagQty', 'skillName', 'skillDesc', 'skillSearch', 'skillCooldown'].includes(e.target.id)) {
+          return;
         }
         saveAllData();
       });
