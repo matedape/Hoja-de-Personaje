@@ -171,25 +171,52 @@
           <h2>Equipamiento</h2>
           <div class="item-input-container">
             <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
-              <input type="text" id="equipName" placeholder="Arma, Armadura..." style="flex: 2;">
+              <input type="text" id="equipName" placeholder="Ej: Filo sangriento" style="flex: 2;">
               <input type="number" id="equipQty" value="1" min="1" style="flex: 0.8; text-align: center;">
               <button type="button" class="btn-primary" onclick="addEquipment()" style="padding: 0 16px;">+</button>
             </div>
             
             <label class="checkbox-extra">
               <input type="checkbox" id="equipHasDetails" onchange="toggleExtraFields('equip')">
-              <span>Agregar efectos / detalles adicionales</span>
+              <span>Agregar detalles / estadísticas avanzadas</span>
             </label>
 
+            <!-- CAMPOS EXTRA DINÁMICOS -->
             <div id="equipExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
-              <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-                <select id="equipEffectType" class="input-custom" style="flex: 1;">
-                  <option value="Pasiva">Efecto Pasivo</option>
-                  <option value="Activa">Efecto Activo</option>
-                  <option value="Notas">Notas / Lore</option>
+              <div class="form-group" style="margin-bottom: 8px;">
+                <label style="font-size: 0.8rem;">Categoría del Objeto</label>
+                <select id="equipCategory" class="input-custom" onchange="updateItemCategoryFields('equip')" style="width: 100%;">
+                  <option value="weapon">⚔️ Arma</option>
+                  <option value="armor">🛡️ Armadura / Equipo</option>
+                  <option value="relic">🔮 Reliquia / Artefacto</option>
+                  <option value="other">📦 Otro / Consumible</option>
                 </select>
               </div>
-              <textarea id="equipDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
+
+              <!-- CAMPOS ESPECÍFICOS: ARMA -->
+              <div id="equipFieldsWeapon" class="category-fields-group grid-2" style="display: grid; gap: 6px;">
+                <input type="text" id="equipDice" placeholder="Dados (ej: 1d10)">
+                <input type="text" id="equipDamageType" placeholder="Tipo daño (ej: Cortante)">
+                <input type="text" id="equipRange" placeholder="Alcance (ej: 5 pies)" style="grid-column: span 2;">
+              </div>
+
+              <!-- CAMPOS ESPECÍFICOS: ARMADURA -->
+              <div id="equipFieldsArmor" class="category-fields-group grid-2" style="display: none; gap: 6px;">
+                <input type="text" id="equipGuard" placeholder="Guardia/CA (ej: +4)">
+                <input type="text" id="equipBonusStats" placeholder="Stats Extra (ej: +3 DEX, +5 vel)">
+              </div>
+
+              <!-- CAMPOS GENERALES -->
+              <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <select id="equipEffectType" class="input-custom" style="flex: 1;">
+                  <option value="Activa">Habilidad Activa</option>
+                  <option value="Pasiva">Habilidad Pasiva</option>
+                  <option value="Lore">Notas / Historia</option>
+                </select>
+                <input type="text" id="equipRarity" placeholder="Rareza (ej: ★★★★★)" style="flex: 1;">
+              </div>
+
+              <textarea id="equipDesc" class="input-custom" placeholder="Efecto de la habilidad o descripción completa..." rows="2" style="width: 100%; margin-top: 6px; resize: vertical;"></textarea>
             </div>
           </div>
 
@@ -201,25 +228,53 @@
           <h2>Mochila</h2>
           <div class="item-input-container">
             <div class="form-row" style="display: flex; gap: 8px; margin-bottom: 6px;">
-              <input type="text" id="bagName" placeholder="Objeto..." style="flex: 2;">
+              <input type="text" id="bagName" placeholder="Ej: Poción de Curación" style="flex: 2;">
               <input type="number" id="bagQty" value="1" min="1" style="flex: 0.8; text-align: center;">
               <button type="button" class="btn-primary" onclick="addBagItem()" style="padding: 0 16px;">+</button>
             </div>
 
             <label class="checkbox-extra">
               <input type="checkbox" id="bagHasDetails" onchange="toggleExtraFields('bag')">
-              <span>Agregar efectos / detalles adicionales</span>
+              <span>Agregar detalles / estadísticas avanzadas</span>
             </label>
 
+            <!-- CAMPOS EXTRA DINÁMICOS MOCHILA -->
             <div id="bagExtraFields" class="extra-fields-container" style="display: none; margin-top: 8px;">
-              <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-                <select id="bagEffectType" class="input-custom" style="flex: 1;">
-                  <option value="Pasiva">Efecto Pasivo</option>
-                  <option value="Activa">Efecto Activo</option>
-                  <option value="Notas">Notas / Lore</option>
+              <div class="form-group" style="margin-bottom: 8px;">
+                <label style="font-size: 0.8rem;">Categoría del Objeto</label>
+                <select id="bagCategory" class="input-custom" onchange="updateItemCategoryFields('bag')" style="width: 100%;">
+                  <option value="other">📦 Otro / Consumible</option>
+                  <option value="weapon">⚔️ Arma</option>
+                  <option value="armor">🛡️ Armadura / Equipo</option>
+                  <option value="relic">🔮 Reliquia / Artefacto</option>
                 </select>
               </div>
-              <textarea id="bagDesc" class="input-custom" placeholder="Descripción de la habilidad o efecto del objeto..." rows="2" style="width: 100%; resize: vertical;"></textarea>
+
+              <!-- CAMPOS ESPECÍFICOS: ARMA -->
+              <div id="bagFieldsWeapon" class="category-fields-group grid-2" style="display: none; gap: 6px;">
+                <input type="text" id="bagDice" placeholder="Dados (ej: 1d6)">
+                <input type="text" id="bagDamageType" placeholder="Tipo daño (ej: Fuego)">
+                <input type="text" id="bagRange" placeholder="Alcance (ej: 20 pies)" style="grid-column: span 2;">
+              </div>
+
+              <!-- CAMPOS ESPECÍFICOS: ARMADURA -->
+              <div id="bagFieldsArmor" class="category-fields-group grid-2" style="display: none; gap: 6px;">
+                <input type="text" id="bagGuard" placeholder="Guardia/CA (ej: +2)">
+                <input type="text" id="bagBonusStats" placeholder="Stats Extra (ej: +1 CON)">
+              </div>
+
+              <!-- CAMPOS GENERALES -->
+              <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <select id="bagEffectType" class="input-custom" style="flex: 1;">
+                  <option value="Consumible">Consumible</option>
+                  <option value="Activa">Habilidad Activa</option>
+                  <option value="Pasiva">Habilidad Pasiva</option>
+                  <option value="Lore">Notas / Historia</option>
+                </select>
+                <input type="text" id="bagRarity" placeholder="Rareza (ej: ★★★☆☆)" style="flex: 1;">
+              </div>
+
+              <textarea id="bagDesc" class="input-custom" placeholder="Efecto de la habilidad o descripción completa..." rows="2" style="width: 100%; margin-top: 6px; resize: vertical;"></textarea>
             </div>
           </div>
 
@@ -301,6 +356,14 @@
     let skills = [];
     let editingSkillId = null;
 
+    // Listado de IDs de inputs temporales de formularios para excluir del guardado automático
+    const formInputIds = [
+      'statusName', 'statusDuration', 
+      'equipName', 'equipQty', 'equipDice', 'equipDamageType', 'equipRange', 'equipGuard', 'equipBonusStats', 'equipRarity', 'equipDesc',
+      'bagName', 'bagQty', 'bagDice', 'bagDamageType', 'bagRange', 'bagGuard', 'bagBonusStats', 'bagRarity', 'bagDesc',
+      'skillName', 'skillSearch', 'skillCooldown'
+    ];
+
     // --- ANIMACIÓN FLIP 3D ---
     function toggleSheetFace() {
       const card = document.getElementById('sheetCard');
@@ -333,7 +396,7 @@
       inputs.forEach((input, index) => {
         const key = input.id ? input.id : 'input_' + index;
         if (savedInputs[key] !== undefined) {
-          if (!['statusName', 'statusDuration', 'equipName', 'equipQty', 'bagName', 'bagQty', 'skillName', 'skillSearch', 'skillCooldown'].includes(input.id)) {
+          if (!formInputIds.includes(input.id)) {
             input.value = savedInputs[key];
           }
         }
@@ -581,12 +644,25 @@
       saveAllData();
     }
 
-    // --- RENDERING Y GESTIÓN DE EQUIPAMIENTO Y MOCHILA ---
+    // --- GESTIÓN DE CATEGORÍAS Y FORMULARIOS ---
+    function updateItemCategoryFields(prefix) {
+      const category = document.getElementById(`${prefix}Category`).value;
+      
+      const weaponFields = document.getElementById(`${prefix}FieldsWeapon`);
+      const armorFields = document.getElementById(`${prefix}FieldsArmor`);
+
+      if (weaponFields) weaponFields.style.display = (category === 'weapon') ? 'grid' : 'none';
+      if (armorFields) armorFields.style.display = (category === 'armor') ? 'grid' : 'none';
+    }
+
     function toggleExtraFields(prefix) {
       const check = document.getElementById(`${prefix}HasDetails`);
       const container = document.getElementById(`${prefix}ExtraFields`);
       if (check && container) {
         container.style.display = check.checked ? 'block' : 'none';
+        if (check.checked) {
+          updateItemCategoryFields(prefix);
+        }
       }
     }
 
@@ -597,71 +673,150 @@
       }
     }
 
-    function renderItemsList(itemsArray, listContainerId, storageKey) {
-      const container = document.getElementById(listContainerId);
+    // --- RENDERING EQUIPAMIENTO ---
+    function renderEquipment() {
+      const container = document.getElementById('equipmentList');
       if (!container) return;
       container.innerHTML = '';
 
-      itemsArray.forEach((item, index) => {
+      equipment.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'item-card-wrapper';
 
-        const hasDetails = item.desc && item.desc.trim() !== '';
-        const detailsId = `item-desc-${storageKey}-${index}`;
+        const detailsId = `equip-details-${index}`;
+
+        let badgesHTML = '';
+        if (item.hasDetails) {
+          if (item.dice) badgesHTML += `<span class="badge-stat">🎲 ${item.dice}</span>`;
+          if (item.damageType) badgesHTML += `<span class="badge-stat">🗡️ ${item.damageType}</span>`;
+          if (item.guard) badgesHTML += `<span class="badge-stat">🛡️ Guardia ${item.guard}</span>`;
+        }
+
+        const hasExtraInfo = item.hasDetails && (item.rarity || item.bonusStats || item.range || item.desc);
 
         card.innerHTML = `
           <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              ${hasDetails ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')">📜</button>` : ''}
-              <span style="font-weight: bold; font-family: var(--font-heading); text-transform: uppercase;">${item.name}</span>
-              ${hasDetails && item.effectType ? `<span class="badge-type ${item.effectType.toLowerCase()}">${item.effectType}</span>` : ''}
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              ${hasExtraInfo ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')">📜</button>` : ''}
+              <span style="font-weight: bold; font-family: var(--font-heading);">${item.name}</span>
+              ${badgesHTML}
             </div>
 
             <div style="display: flex; align-items: center; gap: 4px;">
-              <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, -1)">–</button>
+              <button type="button" class="btn-qty" onclick="changeItemQty('equip', ${index}, -1)">–</button>
               <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
-              <button type="button" class="btn-qty" onclick="changeItemQty('${storageKey}', ${index}, 1)">+</button>
-              <button type="button" class="btn-delete" onclick="deleteItem('${storageKey}', ${index})">✕</button>
+              <button type="button" class="btn-qty" onclick="changeItemQty('equip', ${index}, 1)">+</button>
+              <button type="button" class="btn-delete" onclick="deleteItem('equip', ${index})">✕</button>
             </div>
           </div>
 
-          ${hasDetails ? `
-            <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 6px 10px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); border-radius: 0 0 4px 4px; font-size: 0.85rem;">
-              ${item.desc}
+          ${hasExtraInfo ? `
+            <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 8px 12px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); border-radius: 0 0 4px 4px; font-size: 0.85rem;">
+              ${item.rarity ? `<div style="color: #d4af37; font-size: 0.9rem;">${item.rarity}</div>` : ''}
+              ${item.bonusStats ? `<div><strong>Stats:</strong> ${item.bonusStats}</div>` : ''}
+              ${item.range ? `<div><strong>Alcance:</strong> ${item.range}</div>` : ''}
+              ${item.effectType && item.desc ? `<div style="margin-top: 4px;"><strong>[${item.effectType}]:</strong> ${item.desc}</div>` : (item.desc ? `<div style="margin-top: 4px;">${item.desc}</div>` : '')}
             </div>
           ` : ''}
         `;
+
         container.appendChild(card);
       });
     }
 
-    function renderEquipment() {
-      renderItemsList(equipment, 'equipmentList', 'equip');
-    }
-
+    // --- RENDERING MOCHILA ---
     function renderBackpack() {
-      renderItemsList(backpack, 'bagList', 'backpack');
+      const container = document.getElementById('bagList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      backpack.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'item-card-wrapper';
+
+        const detailsId = `bag-details-${index}`;
+
+        let badgesHTML = '';
+        if (item.hasDetails) {
+          if (item.dice) badgesHTML += `<span class="badge-stat">🎲 ${item.dice}</span>`;
+          if (item.damageType) badgesHTML += `<span class="badge-stat">🗡️ ${item.damageType}</span>`;
+          if (item.guard) badgesHTML += `<span class="badge-stat">🛡️ Guardia ${item.guard}</span>`;
+        }
+
+        const hasExtraInfo = item.hasDetails && (item.rarity || item.bonusStats || item.range || item.desc);
+
+        card.innerHTML = `
+          <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              ${hasExtraInfo ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')">📜</button>` : ''}
+              <span style="font-weight: bold; font-family: var(--font-heading); text-transform: uppercase;">${item.name}</span>
+              ${badgesHTML}
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <button type="button" class="btn-qty" onclick="changeItemQty('backpack', ${index}, -1)">–</button>
+              <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
+              <button type="button" class="btn-qty" onclick="changeItemQty('backpack', ${index}, 1)">+</button>
+              <button type="button" class="btn-delete" onclick="deleteItem('backpack', ${index})">✕</button>
+            </div>
+          </div>
+
+          ${hasExtraInfo ? `
+            <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 8px 12px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); border-radius: 0 0 4px 4px; font-size: 0.85rem;">
+              ${item.rarity ? `<div style="color: #d4af37; font-size: 0.9rem;">${item.rarity}</div>` : ''}
+              ${item.bonusStats ? `<div><strong>Stats:</strong> ${item.bonusStats}</div>` : ''}
+              ${item.range ? `<div><strong>Alcance:</strong> ${item.range}</div>` : ''}
+              ${item.effectType && item.desc ? `<div style="margin-top: 4px;"><strong>[${item.effectType}]:</strong> ${item.desc}</div>` : (item.desc ? `<div style="margin-top: 4px;">${item.desc}</div>` : '')}
+            </div>
+          ` : ''}
+        `;
+
+        container.appendChild(card);
+      });
     }
 
+    // --- ACCIONES DE AGREGAR Y ELIMINAR ---
     function addEquipment() {
       const nameInput = document.getElementById('equipName');
       const qtyInput = document.getElementById('equipQty');
       const hasDetails = document.getElementById('equipHasDetails').checked;
-      const effectType = document.getElementById('equipEffectType').value;
-      const descInput = document.getElementById('equipDesc');
 
       if (!nameInput || nameInput.value.trim() === '') return;
 
-      equipment.push({
+      const newItem = {
+        id: Date.now(),
         name: nameInput.value.trim(),
         qty: parseInt(qtyInput.value) || 1,
-        effectType: hasDetails ? effectType : null,
-        desc: hasDetails ? descInput.value.trim() : ''
-      });
+        hasDetails: hasDetails
+      };
+
+      if (hasDetails) {
+        newItem.category = document.getElementById('equipCategory').value;
+        newItem.effectType = document.getElementById('equipEffectType').value;
+        newItem.rarity = document.getElementById('equipRarity').value.trim();
+        newItem.desc = document.getElementById('equipDesc').value.trim();
+
+        if (newItem.category === 'weapon') {
+          newItem.dice = document.getElementById('equipDice').value.trim();
+          newItem.damageType = document.getElementById('equipDamageType').value.trim();
+          newItem.range = document.getElementById('equipRange').value.trim();
+        } else if (newItem.category === 'armor') {
+          newItem.guard = document.getElementById('equipGuard').value.trim();
+          newItem.bonusStats = document.getElementById('equipBonusStats').value.trim();
+        }
+      }
+
+      equipment.push(newItem);
 
       nameInput.value = '';
       qtyInput.value = '1';
-      descInput.value = '';
+      document.getElementById('equipDice').value = '';
+      document.getElementById('equipDamageType').value = '';
+      document.getElementById('equipRange').value = '';
+      document.getElementById('equipGuard').value = '';
+      document.getElementById('equipBonusStats').value = '';
+      document.getElementById('equipRarity').value = '';
+      document.getElementById('equipDesc').value = '';
       document.getElementById('equipHasDetails').checked = false;
       toggleExtraFields('equip');
 
@@ -673,21 +828,43 @@
       const nameInput = document.getElementById('bagName');
       const qtyInput = document.getElementById('bagQty');
       const hasDetails = document.getElementById('bagHasDetails').checked;
-      const effectType = document.getElementById('bagEffectType').value;
-      const descInput = document.getElementById('bagDesc');
 
       if (!nameInput || nameInput.value.trim() === '') return;
 
-      backpack.push({
+      const newItem = {
+        id: Date.now(),
         name: nameInput.value.trim(),
         qty: parseInt(qtyInput.value) || 1,
-        effectType: hasDetails ? effectType : null,
-        desc: hasDetails ? descInput.value.trim() : ''
-      });
+        hasDetails: hasDetails
+      };
+
+      if (hasDetails) {
+        newItem.category = document.getElementById('bagCategory').value;
+        newItem.effectType = document.getElementById('bagEffectType').value;
+        newItem.rarity = document.getElementById('bagRarity').value.trim();
+        newItem.desc = document.getElementById('bagDesc').value.trim();
+
+        if (newItem.category === 'weapon') {
+          newItem.dice = document.getElementById('bagDice').value.trim();
+          newItem.damageType = document.getElementById('bagDamageType').value.trim();
+          newItem.range = document.getElementById('bagRange').value.trim();
+        } else if (newItem.category === 'armor') {
+          newItem.guard = document.getElementById('bagGuard').value.trim();
+          newItem.bonusStats = document.getElementById('bagBonusStats').value.trim();
+        }
+      }
+
+      backpack.push(newItem);
 
       nameInput.value = '';
       qtyInput.value = '1';
-      descInput.value = '';
+      document.getElementById('bagDice').value = '';
+      document.getElementById('bagDamageType').value = '';
+      document.getElementById('bagRange').value = '';
+      document.getElementById('bagGuard').value = '';
+      document.getElementById('bagBonusStats').value = '';
+      document.getElementById('bagRarity').value = '';
+      document.getElementById('bagDesc').value = '';
       document.getElementById('bagHasDetails').checked = false;
       toggleExtraFields('bag');
 
@@ -779,7 +956,7 @@
       loadAllData();
 
       document.addEventListener('input', (e) => {
-        if (['statusName', 'statusDuration', 'equipName', 'equipQty', 'bagName', 'bagQty', 'skillName', 'skillDesc', 'skillSearch', 'skillCooldown'].includes(e.target.id)) {
+        if (formInputIds.includes(e.target.id)) {
           return;
         }
         saveAllData();
