@@ -319,7 +319,7 @@
 // Variable para saber si estamos editando
 let editingSkillId = null;
 
-// --- HABILIDADES & BUSCADOR ---
+// --- HABILIDADES, FAVORITOS & BUSCADOR ---
 function renderSkills() {
   const list = document.getElementById('skillsList');
   const searchInput = document.getElementById('skillSearch');
@@ -328,7 +328,13 @@ function renderSkills() {
   const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
   list.innerHTML = '';
 
-  const filteredSkills = skills.filter(skill => 
+  // Ordenamos las habilidades: Primero las Favoritas (isFavorite === true), luego por ID/Creación
+  const sortedSkills = [...skills].sort((a, b) => {
+    if (a.isFavorite === b.isFavorite) return 0;
+    return a.isFavorite ? -1 : 1;
+  });
+
+  const filteredSkills = sortedSkills.filter(skill => 
     skill.name.toLowerCase().includes(filter) || 
     skill.desc.toLowerCase().includes(filter) ||
     (skill.type && skill.type.toLowerCase().includes(filter))
@@ -341,16 +347,24 @@ function renderSkills() {
 
   filteredSkills.forEach(skill => {
     const card = document.createElement('div');
-    card.className = 'skill-card';
+    // Agregamos la clase 'favorite-card' si está en favoritos para aplicarle estilos especiales
+    card.className = `skill-card ${skill.isFavorite ? 'favorite-card' : ''}`;
 
     const typeClass = (skill.type || 'Activa').toLowerCase();
     const cooldownHTML = skill.cooldown && skill.cooldown.trim() !== '' 
       ? `<span class="badge-cooldown">⏳ ${skill.cooldown}</span>` 
       : '';
 
+    // Ícono de estrella según si es favorito o no
+    const starIcon = skill.isFavorite ? '★' : '☆';
+    const starTitle = skill.isFavorite ? 'Quitar de favoritos' : 'Marcar como favorito';
+
     card.innerHTML = `
       <div class="skill-card-header">
         <div class="skill-badges">
+          <button type="button" class="btn-fav ${skill.isFavorite ? 'active' : ''}" onclick="toggleFavoriteSkill(${skill.id})" title="${starTitle}">
+            ${starIcon}
+          </button>
           <span class="skill-card-title">${skill.name}</span>
           <span class="badge-type ${typeClass}">${skill.type || 'Activa'}</span>
           ${cooldownHTML}
@@ -364,6 +378,15 @@ function renderSkills() {
     `;
     list.appendChild(card);
   });
+}
+
+function toggleFavoriteSkill(id) {
+  const skill = skills.find(s => s.id === id);
+  if (skill) {
+    skill.isFavorite = !skill.isFavorite;
+    renderSkills();
+    saveAllData();
+  }
 }
 
 function addSkill() {
@@ -388,13 +411,14 @@ function addSkill() {
     const addBtn = document.getElementById('btnSaveSkill');
     if (addBtn) addBtn.textContent = '+ Agregar Habilidad';
   } else {
-    // Crear nueva
+    // Crear nueva (por defecto no es favorita)
     skills.push({
       id: Date.now(),
       name: nameInput.value.trim(),
       type: typeSelect ? typeSelect.value : 'Activa',
       cooldown: cooldownInput ? cooldownInput.value.trim() : '',
-      desc: descInput ? descInput.value.trim() : ''
+      desc: descInput ? descInput.value.trim() : '',
+      isFavorite: false
     });
   }
 
@@ -404,50 +428,6 @@ function addSkill() {
   if (descInput) descInput.value = '';
   if (typeSelect) typeSelect.value = 'Activa';
 
-  renderSkills();
-  saveAllData();
-}
-
-function editSkill(id) {
-  const skill = skills.find(s => s.id === id);
-  if (!skill) return;
-
-  const nameInput = document.getElementById('skillName');
-  const typeSelect = document.getElementById('skillType');
-  const cooldownInput = document.getElementById('skillCooldown');
-  const descInput = document.getElementById('skillDesc');
-
-  if (nameInput) nameInput.value = skill.name;
-  if (typeSelect) typeSelect.value = skill.type || 'Activa';
-  if (cooldownInput) cooldownInput.value = skill.cooldown || '';
-  if (descInput) descInput.value = skill.desc;
-
-  editingSkillId = id;
-
-  const addBtn = document.getElementById('btnSaveSkill');
-  if (addBtn) addBtn.textContent = '💾 Guardar Cambios';
-
-  nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  nameInput.focus();
-}
-
-function deleteSkill(id) {
-  if (editingSkillId === id) {
-    editingSkillId = null;
-    const nameInput = document.getElementById('skillName');
-    const cooldownInput = document.getElementById('skillCooldown');
-    const descInput = document.getElementById('skillDesc');
-    const typeSelect = document.getElementById('skillType');
-    const addBtn = document.getElementById('btnSaveSkill');
-    
-    if (nameInput) nameInput.value = '';
-    if (cooldownInput) cooldownInput.value = '';
-    if (descInput) descInput.value = '';
-    if (typeSelect) typeSelect.value = 'Activa';
-    if (addBtn) addBtn.textContent = '+ Agregar Habilidad';
-  }
-
-  skills = skills.filter(s => s.id !== id);
   renderSkills();
   saveAllData();
 }
