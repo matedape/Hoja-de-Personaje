@@ -13,177 +13,260 @@
 </head>
 <body>
 
-  <div class="sheet-container">
-    <h1>Ficha de Personaje</h1>
+  <!-- CONTENEDOR PERSPECTIVA 3D -->
+  <div class="sheet-wrapper">
+    <div class="sheet-card" id="sheetCard">
 
-    <!-- DATOS BÁSICOS -->
-    <div class="section">
-      <div class="form-group">
-        <label>Nombre del Personaje</label>
-        <input type="text" placeholder="Ej: Orc el Indomable">
-      </div>
-      <div class="grid-2">
-        <div class="form-group">
-          <label>Clase</label>
-          <input type="text" placeholder="Ej: Mago">
-        </div>
-        <div class="form-group">
-          <label>Sexo</label>
-          <input type="text" placeholder="Ej: Masculino">
-        </div>
-        <div class="form-group">
-          <label>Raza</label>
-          <input type="text" placeholder="Ej: Humano">
-        </div>
-        <div class="form-group">
-          <label>Nivel</label>
-          <input type="number" value="1">
-        </div>
-      </div>
-    </div>
+      <!-- ================= CARA FRONTAL ================= -->
+      <div class="sheet-face front">
+        <div class="header-actions">
+          <button type="button" class="btn-action" onclick="toggleSheetFace()">
+            📖 Ver Habilidades
+          </button>
 
-    <!-- PUNTOS DE VIDA, ACCIONES Y RECURSOS -->
-    <div class="section grid-2">
-      <div class="form-group">
-        <label>Vida (Actual / Máx)</label>
-        <input type="text" placeholder="20 / 20">
-      </div>
-      <div class="form-group">
-        <label>Exp</label>
-        <input type="number" placeholder="0">
-      </div>
-      <div class="form-group">
-        <label>Oro</label>
-        <input type="number" placeholder="0">
-      </div>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="btn-action" onclick="exportCharacter()" title="Descargar personaje en JSON">
+              📥 Exportar
+            </button>
+            <button type="button" class="btn-action" onclick="triggerImport()" title="Cargar personaje desde JSON">
+              📤 Importar
+            </button>
+          </div>
+        </div>
 
-       <div class="form-group full-width">
-        <label>energias (<span id="energyCount">3</span>/3)</label>
-        <div class="circle-tracker" id="energyTracker">
-          <input type="checkbox" class="energy-cb">
-          <input type="checkbox" class="energy-cb">
-          <input type="checkbox" class="energy-cb">
+        <h1>Ficha de Personaje</h1>
+
+        <!-- DATOS BÁSICOS -->
+        <div class="section">
+          <div class="form-group">
+            <label>Nombre del Personaje</label>
+            <input type="text" placeholder="Ej: Orc el Indomable">
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Clase</label>
+              <input type="text" placeholder="Ej: Mago">
+            </div>
+            <div class="form-group">
+              <label>Sexo</label>
+              <input type="text" placeholder="Ej: Masculino">
+            </div>
+            <div class="form-group">
+              <label>Raza</label>
+              <input type="text" placeholder="Ej: Humano">
+            </div>
+            <div class="form-group">
+              <label>Nivel</label>
+              <input type="number" value="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- VIDA Y RECURSOS -->
+        <div class="section grid-2">
+          <div class="form-group">
+            <label>Vida (Actual / Máx)</label>
+            <input type="text" placeholder="20 / 20">
+          </div>
+          <div class="form-group">
+            <label>Exp</label>
+            <input type="number" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Oro</label>
+            <input type="number" placeholder="0">
+          </div>
+
+          <div class="form-group full-width">
+            <label>Energías (<span id="energyCount">3</span>/3)</label>
+            <div class="circle-tracker" id="energyTracker">
+              <input type="checkbox" class="energy-cb">
+              <input type="checkbox" class="energy-cb">
+              <input type="checkbox" class="energy-cb">
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Tiradas de Salvación (<span id="saveCount">3</span>/3)</label>
+            <div class="circle-tracker" id="saveTracker">
+              <input type="checkbox" class="save-cb">
+              <input type="checkbox" class="save-cb">
+              <input type="checkbox" class="save-cb">
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Comida / Raciones (<span id="foodCount">5</span>/5)</label>
+            <div class="circle-tracker" id="foodTracker">
+              <input type="checkbox" class="food-cb">
+              <input type="checkbox" class="food-cb">
+              <input type="checkbox" class="food-cb">
+              <input type="checkbox" class="food-cb">
+              <input type="checkbox" class="food-cb">
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTADOS -->
+        <div class="section">
+          <h2>Estados / Efectos</h2>
+          <div class="add-item-form">
+            <input type="text" id="statusName" placeholder="Ej: Envenenado">
+            <input type="text" id="statusDuration" class="input-short" placeholder="Cargas">
+            <button type="button" onclick="addStatus()">+</button>
+          </div>
+          <ul id="statusList" class="item-list"></ul>
+        </div>
+
+        <!-- ATRIBUTOS -->
+        <div class="section">
+          <h2>Atributos</h2>
+          <div class="grid-stats">
+            <div class="form-group">
+              <label>Constitución</label>
+              <input type="number" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label>Fuerza</label>
+              <input type="number" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label>Destreza</label>
+              <input type="number" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label>Inteligencia</label>
+              <input type="number" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label>Sabiduría</label>
+              <input type="number" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label>Carisma</label>
+              <input type="number" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label>Velocidad</label>
+              <input type="text" placeholder="30+5">
+            </div>
+            <div class="form-group">
+              <label>Percepción</label>
+              <input type="number" placeholder="10">
+            </div>
+          </div>
+
+          <div class="form-group hit-dice-group">
+            <label>Dados / Puntos de Golpe (PG)</label>
+            <input type="text" placeholder="Ej: 2d12">
+          </div>
+          <div class="form-group">
+            <label>Puntos de Guardia</label>
+            <input type="number" placeholder="14">
+          </div>
+        </div>
+
+        <!-- EQUIPAMIENTO -->
+        <div class="section">  
+          <h2>Equipamiento</h2>
+          <div class="add-item-form">
+            <input type="text" id="equipName" placeholder="Arma, Armadura...">
+            <input type="number" id="equipQty" class="input-short" value="1" min="1">
+            <button type="button" onclick="addEquipment()">+</button>
+          </div>
+          <ul id="equipmentList" class="item-list"></ul>
+        </div>
+
+        <!-- MOCHILA -->
+        <div class="section">
+          <h2>Mochila</h2>
+          <div class="add-item-form">
+            <input type="text" id="backpackName" placeholder="Objeto...">
+            <input type="number" id="backpackQty" class="input-short" value="1" min="1">
+            <button type="button" onclick="addBackpackItem()">+</button>
+          </div>
+          <ul id="backpackList" class="item-list"></ul>
         </div>
       </div>
 
-      <!-- TIRADAS DE SALVACIÓN CON CONTADOR DINÁMICO -->
-      <div class="form-group full-width">
-        <label>Tiradas de Salvación (<span id="saveCount">3</span>/3)</label>
-        <div class="circle-tracker" id="saveTracker">
-          <input type="checkbox" class="save-cb">
-          <input type="checkbox" class="save-cb">
-          <input type="checkbox" class="save-cb">
-        </div>
-      </div>
+     <!-- ================= CARA POSTERIOR (HABILIDADES) ================= -->
+<div class="sheet-face back">
+  <div class="header-actions">
+    <button type="button" class="btn-action" onclick="toggleSheetFace()">
+      📄 Ver Ficha Principal
+    </button>
 
-      <!-- COMIDA CON CONTADOR DINÁMICO -->
-      <div class="form-group full-width">
-        <label>Comida / Raciones (<span id="foodCount">5</span>/5)</label>
-        <div class="circle-tracker" id="foodTracker">
-          <input type="checkbox" class="food-cb">
-          <input type="checkbox" class="food-cb">
-          <input type="checkbox" class="food-cb">
-          <input type="checkbox" class="food-cb">
-          <input type="checkbox" class="food-cb">
-        </div>
-      </div>
-    </div>
-
-    <!-- ESTADOS Y EFECTOS -->
-    <div class="section">
-      <h2>Estados / Efectos</h2>
-      <div class="add-item-form">
-        <input type="text" id="statusName" placeholder="Ej: Envenenado">
-        <input type="text" id="statusDuration" class="input-short" placeholder="Cargas">
-        <button type="button" onclick="addStatus()">+</button>
-      </div>
-
-      <ul id="statusList" class="item-list"></ul>
-    </div>
-
-    <!-- ATRIBUTOS CUSTOM -->
-    <div class="section">
-      <h2>Atributos</h2>
-      <div class="grid-stats">
-        <div class="form-group">
-          <label>Constitución</label>
-          <input type="number" placeholder="10">
-        </div>
-        <div class="form-group">
-          <label>Fuerza</label>
-          <input type="number" placeholder="10">
-        </div>
-        <div class="form-group">
-          <label>Destreza</label>
-          <input type="number" placeholder="10">
-        </div>
-        <div class="form-group">
-          <label>Inteligencia</label>
-          <input type="number" placeholder="10">
-        </div>
-        <div class="form-group">
-          <label>Sabiduría</label>
-          <input type="number" placeholder="10">
-        </div>
-        <div class="form-group">
-          <label>Carisma</label>
-          <input type="number" placeholder="10">
-        </div>
-        <div class="form-group">
-          <label>Velocidad</label>
-          <input type="text" placeholder="30+5">
-        </div>
-        <div class="form-group">
-          <label>Percepción</label>
-          <input type="number" placeholder="10">
-        </div>
-      </div>
-
-      <!-- DADOS DE GOLPE Y GUARDIA -->
-      <div class="form-group hit-dice-group">
-        <label>Dados / Puntos de Golpe (PG)</label>
-        <input type="text" placeholder="Ej: 2d12">
-      </div>
-      <div class="form-group">
-        <label>Puntos de Guardia</label>
-        <input type="number" placeholder="14">
-      </div>
-    </div>
-
-    <!-- EQUIPAMIENTO -->
-    <div class="section">  
-      <h2>Equipamiento</h2>
-      <div class="add-item-form">
-        <input type="text" id="equipName" placeholder="Arma, Armadura, reliquias...">
-        <input type="number" id="equipQty" class="input-short" value="1" min="1">
-        <button type="button" onclick="addEquipment()">+</button>
-      </div>
-
-      <ul id="equipmentList" class="item-list"></ul>
-    </div>
-
-    <!-- MOCHILA INTERACTIVA -->
-    <div class="section">
-      <h2>Mochila</h2>
-      <div class="add-item-form">
-        <input type="text" id="backpackName" placeholder="Objeto...">
-        <input type="number" id="backpackQty" class="input-short" value="1" min="1">
-        <button type="button" onclick="addBackpackItem()">+</button>
-      </div>
-
-      <ul id="backpackList" class="item-list"></ul>
+    <div style="display: flex; gap: 6px;">
+      <button type="button" class="btn-action" onclick="exportCharacter()" title="Descargar personaje en JSON">
+        📥 Exportar
+      </button>
+      <button type="button" class="btn-action" onclick="triggerImport()" title="Cargar personaje desde JSON">
+        📤 Importar
+      </button>
     </div>
   </div>
+
+  <h2>Habilidades y Hechizos</h2>
+  
+  <div class="section" style="margin-bottom: 15px;">
+    <div class="form-group">
+      <label>Nombre de la Habilidad</label>
+      <input type="text" id="skillName" placeholder="Ej: Bola de Fuego">
+    </div>
+
+    <!-- NUEVO: TIPO Y REUTILIZACIÓN EN PARALELO -->
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="skillType" class="skill-select">
+          <option value="Activa">Activa</option>
+          <option value="Pasiva">Pasiva</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Reutilización / Cooldown (Opcional)</label>
+        <input type="text" id="skillCooldown" placeholder="Ej: 2 turnos, 1/Descanso">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Funcionamiento / Descripción</label>
+      <textarea id="skillDesc" class="skill-textarea" placeholder="Escribe el alcance, daño, costo, etc."></textarea>
+    </div>
+
+    <button type="button" id="btnSaveSkill" class="btn-action" onclick="addSkill()" style="margin-top: 6px;">
+      + Agregar Habilidad
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="form-group search-box">
+      <label>🔍 Buscar Habilidad</label>
+      <input type="text" id="skillSearch" placeholder="Escribe para filtrar..." oninput="renderSkills()">
+    </div>
+
+    <div id="skillsList"></div>
+  </div>
+</div>
+
+  <!-- INPUT OCULTO COMPARTIDO PARA IMPORTAR -->
+  <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importCharacter(event)">
 
   <script>
     let equipment = [];
     let backpack = [];
     let statuses = [];
+    let skills = [];
 
-    // --- GUARDADO Y CARGA EN LOCALSTORAGE ---
+    // --- ANIMACIÓN FLIP 3D ---
+    function toggleSheetFace() {
+      const card = document.getElementById('sheetCard');
+      card.classList.toggle('flipped');
+    }
 
+    // --- LOCALSTORAGE ---
     function saveAllData() {
-      const inputs = document.querySelectorAll('.sheet-container input[type="text"], .sheet-container input[type="number"]');
+      const inputs = document.querySelectorAll('.sheet-wrapper input[type="text"], .sheet-wrapper input[type="number"]');
       const inputsData = {};
       inputs.forEach((input, index) => {
         const key = input.id ? input.id : 'input_' + index;
@@ -191,29 +274,30 @@
       });
       localStorage.setItem('dnd_sheet_inputs', JSON.stringify(inputsData));
 
-      const checkboxes = document.querySelectorAll('.sheet-container input[type="checkbox"]');
+      const checkboxes = document.querySelectorAll('.sheet-wrapper input[type="checkbox"]');
       const cbData = Array.from(checkboxes).map(cb => cb.checked);
       localStorage.setItem('dnd_sheet_checkboxes', JSON.stringify(cbData));
 
       localStorage.setItem('dnd_sheet_equipment', JSON.stringify(equipment));
       localStorage.setItem('dnd_sheet_backpack', JSON.stringify(backpack));
       localStorage.setItem('dnd_sheet_statuses', JSON.stringify(statuses));
+      localStorage.setItem('dnd_sheet_skills', JSON.stringify(skills));
     }
 
     function loadAllData() {
       const savedInputs = JSON.parse(localStorage.getItem('dnd_sheet_inputs') || '{}');
-      const inputs = document.querySelectorAll('.sheet-container input[type="text"], .sheet-container input[type="number"]');
+      const inputs = document.querySelectorAll('.sheet-wrapper input[type="text"], .sheet-wrapper input[type="number"]');
       inputs.forEach((input, index) => {
         const key = input.id ? input.id : 'input_' + index;
         if (savedInputs[key] !== undefined) {
-          if (!['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty'].includes(input.id)) {
+          if (!['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty', 'skillName', 'skillSearch'].includes(input.id)) {
             input.value = savedInputs[key];
           }
         }
       });
 
       const savedCB = JSON.parse(localStorage.getItem('dnd_sheet_checkboxes') || '[]');
-      const checkboxes = document.querySelectorAll('.sheet-container input[type="checkbox"]');
+      const checkboxes = document.querySelectorAll('.sheet-wrapper input[type="checkbox"]');
       checkboxes.forEach((cb, index) => {
         if (savedCB[index] !== undefined) {
           cb.checked = savedCB[index];
@@ -223,38 +307,171 @@
       equipment = JSON.parse(localStorage.getItem('dnd_sheet_equipment') || '[]');
       backpack = JSON.parse(localStorage.getItem('dnd_sheet_backpack') || '[]');
       statuses = JSON.parse(localStorage.getItem('dnd_sheet_statuses') || '[]');
+      skills = JSON.parse(localStorage.getItem('dnd_sheet_skills') || '[]');
 
       renderEquipment();
       renderBackpack();
       renderStatuses();
+      renderSkills();
       updateTrackers();
     }
 
-    // --- CONTADORES DINÁMICOS PARA CÍRCULOS ---
+// Variable para saber si estamos editando
+let editingSkillId = null;
+
+// --- HABILIDADES & BUSCADOR ---
+function renderSkills() {
+  const list = document.getElementById('skillsList');
+  const searchInput = document.getElementById('skillSearch');
+  if (!list) return;
+
+  const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  list.innerHTML = '';
+
+  const filteredSkills = skills.filter(skill => 
+    skill.name.toLowerCase().includes(filter) || 
+    skill.desc.toLowerCase().includes(filter) ||
+    (skill.type && skill.type.toLowerCase().includes(filter))
+  );
+
+  if (filteredSkills.length === 0) {
+    list.innerHTML = '<p style="font-style: italic; font-size: 0.85rem; text-align: center; color: var(--accent-color);">No hay habilidades que coincidan.</p>';
+    return;
+  }
+
+  filteredSkills.forEach(skill => {
+    const card = document.createElement('div');
+    card.className = 'skill-card';
+
+    const typeClass = (skill.type || 'Activa').toLowerCase();
+    const cooldownHTML = skill.cooldown && skill.cooldown.trim() !== '' 
+      ? `<span class="badge-cooldown">⏳ ${skill.cooldown}</span>` 
+      : '';
+
+    card.innerHTML = `
+      <div class="skill-card-header">
+        <div class="skill-badges">
+          <span class="skill-card-title">${skill.name}</span>
+          <span class="badge-type ${typeClass}">${skill.type || 'Activa'}</span>
+          ${cooldownHTML}
+        </div>
+        <div style="display: flex; gap: 4px;">
+          <button type="button" class="btn-qty" onclick="editSkill(${skill.id})" title="Editar habilidad">✏️</button>
+          <button type="button" class="btn-delete" onclick="deleteSkill(${skill.id})" title="Borrar habilidad">✕</button>
+        </div>
+      </div>
+      <div class="skill-card-desc">${skill.desc}</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function addSkill() {
+  const nameInput = document.getElementById('skillName');
+  const typeSelect = document.getElementById('skillType');
+  const cooldownInput = document.getElementById('skillCooldown');
+  const descInput = document.getElementById('skillDesc');
+
+  if (!nameInput || nameInput.value.trim() === '') return;
+
+  if (editingSkillId !== null) {
+    // Editar existente
+    const skill = skills.find(s => s.id === editingSkillId);
+    if (skill) {
+      skill.name = nameInput.value.trim();
+      skill.type = typeSelect ? typeSelect.value : 'Activa';
+      skill.cooldown = cooldownInput ? cooldownInput.value.trim() : '';
+      skill.desc = descInput ? descInput.value.trim() : '';
+    }
+    editingSkillId = null;
+    
+    const addBtn = document.getElementById('btnSaveSkill');
+    if (addBtn) addBtn.textContent = '+ Agregar Habilidad';
+  } else {
+    // Crear nueva
+    skills.push({
+      id: Date.now(),
+      name: nameInput.value.trim(),
+      type: typeSelect ? typeSelect.value : 'Activa',
+      cooldown: cooldownInput ? cooldownInput.value.trim() : '',
+      desc: descInput ? descInput.value.trim() : ''
+    });
+  }
+
+  // Limpiar campos
+  nameInput.value = '';
+  if (cooldownInput) cooldownInput.value = '';
+  if (descInput) descInput.value = '';
+  if (typeSelect) typeSelect.value = 'Activa';
+
+  renderSkills();
+  saveAllData();
+}
+
+function editSkill(id) {
+  const skill = skills.find(s => s.id === id);
+  if (!skill) return;
+
+  const nameInput = document.getElementById('skillName');
+  const typeSelect = document.getElementById('skillType');
+  const cooldownInput = document.getElementById('skillCooldown');
+  const descInput = document.getElementById('skillDesc');
+
+  if (nameInput) nameInput.value = skill.name;
+  if (typeSelect) typeSelect.value = skill.type || 'Activa';
+  if (cooldownInput) cooldownInput.value = skill.cooldown || '';
+  if (descInput) descInput.value = skill.desc;
+
+  editingSkillId = id;
+
+  const addBtn = document.getElementById('btnSaveSkill');
+  if (addBtn) addBtn.textContent = '💾 Guardar Cambios';
+
+  nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  nameInput.focus();
+}
+
+function deleteSkill(id) {
+  if (editingSkillId === id) {
+    editingSkillId = null;
+    const nameInput = document.getElementById('skillName');
+    const cooldownInput = document.getElementById('skillCooldown');
+    const descInput = document.getElementById('skillDesc');
+    const typeSelect = document.getElementById('skillType');
+    const addBtn = document.getElementById('btnSaveSkill');
+    
+    if (nameInput) nameInput.value = '';
+    if (cooldownInput) cooldownInput.value = '';
+    if (descInput) descInput.value = '';
+    if (typeSelect) typeSelect.value = 'Activa';
+    if (addBtn) addBtn.textContent = '+ Agregar Habilidad';
+  }
+
+  skills = skills.filter(s => s.id !== id);
+  renderSkills();
+  saveAllData();
+}
+
+    // --- CONTADORES ---
     function updateTrackers() {
       const saveBoxes = document.querySelectorAll('.save-cb');
       const saveChecked = document.querySelectorAll('.save-cb:checked').length;
       const saveCountElem = document.getElementById('saveCount');
-       const energyBoxes = document.querySelectorAll('.energy-cb');
+
+      const energyBoxes = document.querySelectorAll('.energy-cb');
       const energyChecked = document.querySelectorAll('.energy-cb:checked').length;
       const energyCountElem = document.getElementById('energyCount');
-      if (energyCountElem) {
-        energyCountElem.textContent = energyBoxes.length - energyChecked;
-      }
-      if (saveCountElem) {
-        saveCountElem.textContent = saveBoxes.length - saveChecked;
-      }
+
+      if (energyCountElem) energyCountElem.textContent = energyBoxes.length - energyChecked;
+      if (saveCountElem) saveCountElem.textContent = saveBoxes.length - saveChecked;
 
       const foodBoxes = document.querySelectorAll('.food-cb');
       const foodChecked = document.querySelectorAll('.food-cb:checked').length;
       const foodCountElem = document.getElementById('foodCount');
-      
-      if (foodCountElem) {
-        foodCountElem.textContent = foodBoxes.length - foodChecked;
-      }
+      if (foodCountElem) foodCountElem.textContent = foodBoxes.length - foodChecked;
     }
 
-    // --- LÓGICA DE ESTADOS / EFECTOS ---
+    // --- ESTADOS ---
     function renderStatuses() {
       const list = document.getElementById('statusList');
       if (!list) return;
@@ -330,7 +547,7 @@
       saveAllData();
     }
 
-    // --- LÓGICA DE EQUIPAMIENTO Y MOCHILA ---
+    // --- EQUIPO Y MOCHILA ---
     function renderEquipment() {
       const list = document.getElementById('equipmentList');
       if (!list) return;
@@ -431,13 +648,68 @@
       saveAllData();
     }
 
-    // --- INICIALIZACIÓN SEGUURA ---
+    // --- IMPORTAR & EXPORTAR ---
+    function exportCharacter() {
+      saveAllData();
+
+      const characterData = {
+        inputs: JSON.parse(localStorage.getItem('dnd_sheet_inputs') || '{}'),
+        checkboxes: JSON.parse(localStorage.getItem('dnd_sheet_checkboxes') || '[]'),
+        equipment: equipment,
+        backpack: backpack,
+        statuses: statuses,
+        skills: skills
+      };
+
+      const charName = characterData.inputs['input_0'] || 'Personaje';
+      const fileName = `${charName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_ficha.json`;
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(characterData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", fileName);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function triggerImport() {
+      document.getElementById('importFileInput').click();
+    }
+
+    function importCharacter(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+
+          if (data.inputs) localStorage.setItem('dnd_sheet_inputs', JSON.stringify(data.inputs));
+          if (data.checkboxes) localStorage.setItem('dnd_sheet_checkboxes', JSON.stringify(data.checkboxes));
+          if (data.equipment) localStorage.setItem('dnd_sheet_equipment', JSON.stringify(data.equipment));
+          if (data.backpack) localStorage.setItem('dnd_sheet_backpack', JSON.stringify(data.backpack));
+          if (data.statuses) localStorage.setItem('dnd_sheet_statuses', JSON.stringify(data.statuses));
+          if (data.skills) localStorage.setItem('dnd_sheet_skills', JSON.stringify(data.skills));
+
+          loadAllData();
+          alert('¡Personaje cargado correctamente!');
+        } catch (err) {
+          alert('Error al leer el archivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // --- EVENT LISTENERS ---
     window.addEventListener('DOMContentLoaded', () => {
       loadAllData();
 
       document.addEventListener('input', (e) => {
-        if (['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty'].includes(e.target.id)) {
-          return;
+        if (['statusName', 'statusDuration', 'equipName', 'equipQty', 'backpackName', 'backpackQty', 'skillName', 'skillDesc', 'skillSearch', 'skillCooldown'].includes(e.target.id)) {
+      return;
         }
         saveAllData();
       });
