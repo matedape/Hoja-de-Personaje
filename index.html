@@ -124,35 +124,35 @@
           <div class="grid-stats">
             <div class="form-group">
               <label>Constitución</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
             <div class="form-group">
               <label>Fuerza</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
             <div class="form-group">
               <label>Destreza</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
             <div class="form-group">
               <label>Inteligencia</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')  ">
             </div>
             <div class="form-group">
               <label>Sabiduría</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
             <div class="form-group">
               <label>Carisma</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
             <div class="form-group">
               <label>Velocidad</label>
-              <input type="text" placeholder="30+5">
+              <input type="text" inputmode="decimal" placeholder="30+5" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
             <div class="form-group">
               <label>Percepción</label>
-              <input type="number" placeholder="10">
+              <input type="text" inputmode="decimal" placeholder="10" oninput="this.value = this.value.replace(/[^0-9+\-.,]/g, '')">
             </div>
           </div>
 
@@ -162,7 +162,7 @@
           </div>
           <div class="form-group">
             <label>Puntos de Guardia</label>
-            <input type="number" placeholder="14">
+            <input type="text" inputmode="decimal" placeholder="14">
           </div>
         </div>
 
@@ -356,7 +356,6 @@
     let skills = [];
     let editingSkillId = null;
 
-    // Listado de IDs de inputs temporales de formularios para excluir del guardado automático
     const formInputIds = [
       'statusName', 'statusDuration', 
       'equipName', 'equipQty', 'equipDice', 'equipDamageType', 'equipRange', 'equipGuard', 'equipBonusStats', 'equipRarity', 'equipDesc',
@@ -364,13 +363,11 @@
       'skillName', 'skillSearch', 'skillCooldown'
     ];
 
-    // --- ANIMACIÓN FLIP 3D ---
     function toggleSheetFace() {
       const card = document.getElementById('sheetCard');
       card.classList.toggle('flipped');
     }
 
-    // --- LOCALSTORAGE ---
     function saveAllData() {
       const inputs = document.querySelectorAll('.sheet-wrapper input[type="text"], .sheet-wrapper input[type="number"]');
       const inputsData = {};
@@ -422,6 +419,40 @@
       updateTrackers();
     }
 
+    // --- FUNCIONES DE REORDENAMIENTO ---
+    function moveItem(type, index, direction) {
+      const list = type === 'equip' ? equipment : backpack;
+      const targetIndex = index + direction;
+
+      if (targetIndex >= 0 && targetIndex < list.length) {
+        const temp = list[index];
+        list[index] = list[targetIndex];
+        list[targetIndex] = temp;
+
+        if (type === 'equip') renderEquipment();
+        else renderBackpack();
+        saveAllData();
+      }
+    }
+
+    function moveSkill(index, direction) {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= skills.length) return;
+
+      const currentSkill = skills[index];
+      const targetSkill = skills[targetIndex];
+
+      // Regla de Favoritos: No se pueden mezclar entre grupos
+      if (currentSkill.isFavorite && !targetSkill.isFavorite) return;
+      if (!currentSkill.isFavorite && targetSkill.isFavorite) return;
+
+      skills[index] = targetSkill;
+      skills[targetIndex] = currentSkill;
+
+      renderSkills();
+      saveAllData();
+    }
+
     // --- HABILIDADES & BUSCADOR ---
     function renderSkills() {
       const list = document.getElementById('skillsList');
@@ -431,12 +462,15 @@
       const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
       list.innerHTML = '';
 
-      const sortedSkills = [...skills].sort((a, b) => {
-        if (a.isFavorite === b.isFavorite) return 0;
-        return a.isFavorite ? -1 : 1;
-      });
+      if (filter === '') {
+        // Asegurar que favoritos queden siempre arriba al renderizar
+        skills.sort((a, b) => {
+          if (a.isFavorite === b.isFavorite) return 0;
+          return a.isFavorite ? -1 : 1;
+        });
+      }
 
-      const filteredSkills = sortedSkills.filter(skill => 
+      const filteredSkills = skills.filter(skill => 
         skill.name.toLowerCase().includes(filter) || 
         skill.desc.toLowerCase().includes(filter) ||
         (skill.type && skill.type.toLowerCase().includes(filter))
@@ -447,7 +481,8 @@
         return;
       }
 
-      filteredSkills.forEach(skill => {
+      filteredSkills.forEach((skill) => {
+        const realIndex = skills.findIndex(s => s.id === skill.id);
         const card = document.createElement('div');
         card.className = `skill-card ${skill.isFavorite ? 'favorite-card' : ''}`;
 
@@ -459,6 +494,8 @@
         const starIcon = skill.isFavorite ? '★' : '☆';
         const starTitle = skill.isFavorite ? 'Quitar de favoritos' : 'Marcar como favorito';
 
+        const showOrderBtns = filter === '';
+
         card.innerHTML = `
           <div class="skill-card-header">
             <div class="skill-badges">
@@ -469,7 +506,11 @@
               <span class="badge-type ${typeClass}">${skill.type || 'Activa'}</span>
               ${cooldownHTML}
             </div>
-            <div style="display: flex; gap: 4px;">
+            <div style="display: flex; gap: 4px; align-items: center;">
+              ${showOrderBtns ? `
+                <button type="button" class="btn-qty" onclick="moveSkill(${realIndex}, -1)" title="Subir">▲</button>
+                <button type="button" class="btn-qty" onclick="moveSkill(${realIndex}, 1)" title="Bajar">▼</button>
+              ` : ''}
               <button type="button" class="btn-qty" onclick="editSkill(${skill.id})" title="Editar habilidad">✏️</button>
               <button type="button" class="btn-delete" onclick="deleteSkill(${skill.id})" title="Borrar habilidad">✕</button>
             </div>
@@ -703,6 +744,8 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 4px;">
+              <button type="button" class="btn-qty" onclick="moveItem('equip', ${index}, -1)" title="Subir">▲</button>
+              <button type="button" class="btn-qty" onclick="moveItem('equip', ${index}, 1)" title="Bajar">▼</button>
               <button type="button" class="btn-qty" onclick="changeItemQty('equip', ${index}, -1)">–</button>
               <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
               <button type="button" class="btn-qty" onclick="changeItemQty('equip', ${index}, 1)">+</button>
@@ -754,6 +797,8 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 4px;">
+              <button type="button" class="btn-qty" onclick="moveItem('backpack', ${index}, -1)" title="Subir">▲</button>
+              <button type="button" class="btn-qty" onclick="moveItem('backpack', ${index}, 1)" title="Bajar">▼</button>
               <button type="button" class="btn-qty" onclick="changeItemQty('backpack', ${index}, -1)">–</button>
               <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
               <button type="button" class="btn-qty" onclick="changeItemQty('backpack', ${index}, 1)">+</button>
