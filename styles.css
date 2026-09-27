@@ -45,12 +45,14 @@ body {
   background-color: var(--paper-bg);
   border: 4px solid var(--paper-border);
   border-radius: 8px;
+  border-top-left-radius: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(140, 109, 63, 0.35);
   width: 100%;
   max-width: 500px;
   padding: 15px;
-  overflow: hidden;
+  overflow: visible !important;
   backdrop-filter: blur(1px);
+  position: relative;
 }
 
 h1, h2 {
@@ -356,12 +358,16 @@ button:hover {
 }
 
 /* ===================================================
-   ANIMACIÓN FLIP 3D Y CONTROL DE CARAS (FIXED)
+   ANIMACIÓN FLIP 3D Y CONTROL DE CARAS
    =================================================== */
 .sheet-wrapper {
   perspective: 1200px;
   width: 100%;
   max-width: 500px;
+  position: relative;
+  margin-top: 25px;
+  padding-top: 15px; /* Margen superior interno para acomodar la pestaña elevada */
+  overflow: visible !important;
 }
 
 .sheet-card {
@@ -369,6 +375,7 @@ button:hover {
   width: 100%;
   transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
+  overflow: visible !important;
 }
 
 .sheet-card.flipped {
@@ -416,6 +423,73 @@ button:hover {
 }
 
 /* ===================================================
+   SISTEMA DE PESTAÑAS (TAB SYSTEM)
+   =================================================== */
+.npc-tab-header, .tabs-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  position: absolute;
+  top: -24px; /* Posiciona la barra por encima de la tarjeta pergamino */
+  left: 12px;
+  z-index: 20;
+  overflow: visible !important;
+}
+
+/* Botón base de pestaña */
+.tab-btn, .tab-button {
+  background-color: #5c1d1d;
+  color: #fff;
+  border: 2px solid #3a1010;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 6px 14px;
+  font-family: var(--font-title, sans-serif);
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.tab-btn:hover, .tab-button:hover {
+  background-color: #722525;
+}
+
+/* Pestaña activa: Se eleva suavemente e integra con la ficha */
+.tab-btn.active, .tab-button.active {
+  background-color: #722525;
+  color: #fff;
+  border-color: #3a1010;
+  border-bottom: 2px solid #722525; /* Oculta la división inferior */
+  padding-top: 10px;
+  padding-bottom: 8px;
+  margin-bottom: -2px; /* Engancha directamente al borde de la ficha */
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
+  z-index: 25;
+}
+
+.tab-add-btn {
+  background-color: #d1be9a;
+  color: var(--accent-color);
+  border: 2px solid var(--paper-border);
+  border-bottom: none;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding: 5px 10px;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.tab-add-btn:hover {
+  background-color: var(--paper-bg);
+}
+
+/* ===================================================
    ESTILOS DE FAVORITOS (ESTRELLA & DESTACADO)
    =================================================== */
 .btn-fav {
@@ -459,10 +533,10 @@ button:hover {
 }
 
 .extra-fields-container {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(115, 22, 28, 0.04);
   padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--paper-border);
+  border-radius: 6px;
+  border: 1px solid rgba(115, 22, 28, 0.2);
   margin-top: 6px;
 }
 
@@ -480,19 +554,11 @@ button:hover {
   transform: scale(1.2);
 }
 
-/* Ajustes para integrar el estilo pergamino en select y textarea */
-.extra-fields-container {
-  background: rgba(115, 22, 28, 0.04);
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(115, 22, 28, 0.2);
-}
-
 .extra-fields-container select,
 .extra-fields-container textarea {
   font-family: inherit;
-  color: #4a154b; /* O el color de texto principal de tu ficha */
-  background-color: #fdfbf7; /* Fondo pergamino claro */
+  color: var(--text-color);
+  background-color: #fdfbf7;
   border: 1px solid #a67c52;
   border-radius: 4px;
   padding: 6px 8px;
@@ -501,7 +567,7 @@ button:hover {
 
 .extra-fields-container select:focus,
 .extra-fields-container textarea:focus {
-  border-color: #73161c;
+  border-color: var(--accent-color);
   box-shadow: 0 0 3px rgba(115, 22, 28, 0.3);
 }
 
