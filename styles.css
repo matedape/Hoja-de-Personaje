@@ -1,5 +1,5 @@
 /* ===================================================
-   VARIABLES Y CONFIGURACIÓN GLOBAL
+   VARIABLES Y CONFIGURACIÓN GLOBAL (PALETA TABERNA)
    =================================================== */
 :root {
   --bg-color: #0e0906;
@@ -19,7 +19,6 @@
 }
 
 body {
-  /* Fondo de taberna + viñeta de iluminación */
   background-color: var(--bg-color);
   background-image: 
     radial-gradient(circle at center, rgba(255, 120, 30, 0.15) 0%, rgba(0, 0, 0, 0.75) 85%),
@@ -41,20 +40,6 @@ body {
 /* ===================================================
    ESTRUCTURA GENERAL Y SECCIONES
    =================================================== */
-.sheet-container {
-  background-color: var(--paper-bg);
-  border: 4px solid var(--paper-border);
-  border-radius: 8px;
-  border-top-left-radius: 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(140, 109, 63, 0.35);
-  width: 100%;
-  max-width: 500px;
-  padding: 15px;
-  overflow: visible !important;
-  backdrop-filter: blur(1px);
-  position: relative;
-}
-
 h1, h2 {
   font-family: var(--font-title);
   text-align: center;
@@ -66,7 +51,7 @@ h1, h2 {
 .section {
   border: 2px solid var(--paper-border);
   border-radius: 6px;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 12px;
   background: rgba(255, 255, 255, 0.35);
   min-width: 0;
@@ -95,12 +80,14 @@ label {
 input[type="text"], 
 input[type="number"],
 .skill-select,
-.skill-textarea {
+.skill-textarea,
+select,
+textarea {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--paper-border);
   border-radius: 4px;
   padding: 6px 8px;
-  font-family: inherit;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--text-color);
   outline: none;
@@ -112,7 +99,9 @@ input[type="number"],
 
 input:focus, 
 .skill-select:focus, 
-.skill-textarea:focus {
+.skill-textarea:focus,
+select:focus,
+textarea:focus {
   background: #fff;
   border-color: var(--accent-color);
 }
@@ -134,7 +123,9 @@ input:focus,
   grid-column: span 2;
 }
 
-/* BOTONES GLOBALES */
+/* ===================================================
+   BOTONES Y ACCIONES
+   =================================================== */
 button {
   background-color: var(--accent-color);
   color: #fff;
@@ -163,7 +154,7 @@ button:hover {
 
 .btn-action {
   background-color: var(--accent-color);
-  color: #fff;
+  color: #d1be9a;
   border: 1px solid var(--paper-border);
   padding: 6px 12px;
   border-radius: 4px;
@@ -177,16 +168,16 @@ button:hover {
 }
 
 .btn-action:hover {
+  color: #fff;
   background-color: var(--accent-hover);
 }
 
 /* ===================================================
-   COMPONENTES Y TRACKERS
+   TRACKER DE CÍRCULOS (DOBLE ANILLO RÚSTICO Y CENTRO SÓLIDO)
    =================================================== */
-/* Tracker de Círculos */
 .circle-tracker {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   margin-top: 4px;
   flex-wrap: wrap;
@@ -195,21 +186,35 @@ button:hover {
 .circle-tracker input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--accent-color);
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   outline: none;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.5);
-  transition: all 0.2s ease;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  
+  /* Círculo base sin marcar (borde irregular hecho a mano) */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18,22 C40,10 78,13 85,38 C92,63 80,88 55,90 C30,92 12,73 11,48 C10,23 22,25 26,22' fill='none' stroke='%237a1c1c' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: transform 0.2s ease;
   flex-shrink: 0;
 }
 
-.circle-tracker input[type="checkbox"]:checked {
-  background-color: var(--accent-color);
-  box-shadow: inset 0 0 0 3px var(--paper-bg);
+.circle-tracker input[type="checkbox"]:hover {
+  transform: scale(1.08) rotate(-4deg);
 }
+
+/* Estado marcado: Mantiene el borde rústico exterior + Anillo interno + Centro sólido */
+.circle-tracker input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18,22 C40,10 78,13 85,38 C92,63 80,88 55,90 C30,92 12,73 11,48 C10,23 22,25 26,22' fill='none' stroke='%237a1c1c' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M26,30 C42,20 74,23 78,48 C82,73 68,82 46,80 C24,78 18,58 22,38 Z' fill='none' stroke='%237a1c1c' stroke-width='4.5' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='52' r='20' fill='%237a1c1c'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 
 .hit-dice-group {
   margin-top: 12px;
@@ -217,7 +222,7 @@ button:hover {
   border-top: 1px dashed var(--paper-border);
 }
 
-/* Listas de Ítems y Formularios de Entrada */
+/* Listas y Formularios */
 .add-item-form {
   display: flex;
   gap: 6px;
@@ -261,12 +266,14 @@ button:hover {
 .btn-qty {
   padding: 2px 6px;
   font-size: 0.8rem;
+  border-radius: 4px;
 }
 
 .btn-delete {
   background: #4a0000;
   padding: 2px 6px;
   font-size: 0.8rem;
+  border-radius: 4px;
 }
 
 .status-card {
@@ -358,7 +365,7 @@ button:hover {
 }
 
 /* ===================================================
-   ANIMACIÓN FLIP 3D Y CONTROL DE CARAS
+   ANIMACIÓN FLIP 3D Y CONTENEDORES
    =================================================== */
 .sheet-wrapper {
   perspective: 1200px;
@@ -366,13 +373,15 @@ button:hover {
   max-width: 500px;
   position: relative;
   margin-top: 25px;
-  padding-top: 15px; /* Margen superior interno para acomodar la pestaña elevada */
+  padding-top: 15px;
   overflow: visible !important;
 }
 
 .sheet-card {
   position: relative;
   width: 100%;
+  height: auto !important;
+  min-height: 100vh;
   transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
   overflow: visible !important;
@@ -382,9 +391,11 @@ button:hover {
   transform: rotateY(180deg);
 }
 
-/* Estilo base de ambas caras */
 .sheet-face {
+  position: relative !important;
   width: 100%;
+  height: auto !important;
+  overflow-y: visible !important;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background-color: var(--paper-bg);
@@ -396,17 +407,14 @@ button:hover {
   transition: opacity 0.3s ease;
 }
 
-/* Posicionamiento de la cara trasera */
 .sheet-face.back {
-  position: absolute;
+  position: absolute !important;
   top: 0;
   left: 0;
   height: 100%;
-  overflow-y: auto;
   transform: rotateY(180deg);
 }
 
-/* FIX DE VISIBILIDAD: Oculta totalmente la cara que no está activa */
 .sheet-card:not(.flipped) .sheet-face.back {
   pointer-events: none;
   opacity: 0;
@@ -428,69 +436,57 @@ button:hover {
 .npc-tab-header, .tabs-container {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
+  gap: 4px;
   position: absolute;
-  top: -24px; /* Posiciona la barra por encima de la tarjeta pergamino */
+  top: -33px;
   left: 12px;
   z-index: 20;
   overflow: visible !important;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+  transform-origin: top right;
+}
+.sheet-card.flipped .npc-tab-header {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.95);
+  pointer-events: none; /* Evita que se puedan clickear por error mientras están ocultas */
 }
 
-/* Botón base de pestaña */
 .tab-btn, .tab-button {
-  background-color: #5c1d1d;
-  color: #fff;
-  border: 2px solid #3a1010;
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-  padding: 6px 14px;
-  font-family: var(--font-title, sans-serif);
-  font-weight: bold;
-  font-size: 0.95rem;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4);
-}
-
-.tab-btn:hover, .tab-button:hover {
-  background-color: #722525;
-}
-
-/* Pestaña activa: Se eleva suavemente e integra con la ficha */
-.tab-btn.active, .tab-button.active {
-  background-color: #722525;
-  color: #fff;
-  border-color: #3a1010;
-  border-bottom: 2px solid #722525; /* Oculta la división inferior */
-  padding-top: 10px;
-  padding-bottom: 8px;
-  margin-bottom: -2px; /* Engancha directamente al borde de la ficha */
-  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
-  z-index: 25;
-}
-
-.tab-add-btn {
-  background-color: #d1be9a;
-  color: var(--accent-color);
+  background-color: #4a1515;
+  color: #d1be9a;
   border: 2px solid var(--paper-border);
   border-bottom: none;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  padding: 5px 10px;
+  padding: 6px 16px;
   font-family: var(--font-title);
-  font-size: 1.1rem;
   font-weight: bold;
+  font-size: 0.95rem;
   cursor: pointer;
-  line-height: 1;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4);
 }
 
-.tab-add-btn:hover {
+.tab-btn:hover, .tab-button:hover {
+  background-color: #a32424;
+  color: #fff;
+}
+
+.tab-btn.active, .tab-button.active {
   background-color: var(--paper-bg);
+  color: var(--accent-color);
+  border-color: var(--paper-border);
+  border-bottom: 3px solid var(--paper-bg);
+  padding-top: 9px;
+  padding-bottom: 8px;
+  margin-bottom: -2px;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 25;
 }
 
 /* ===================================================
-   ESTILOS DE FAVORITOS (ESTRELLA & DESTACADO)
+   EXTRAS Y FAVORITOS
    =================================================== */
 .btn-fav {
   background: transparent;
@@ -513,14 +509,12 @@ button:hover {
   text-shadow: 0 0 2px rgba(122, 28, 28, 0.4);
 }
 
-/* Resalte visual en la tarjeta favorita */
 .skill-card.favorite-card {
   border-left: 4px solid var(--accent-color);
   background: rgba(255, 255, 255, 0.75);
   box-shadow: 0 2px 6px rgba(122, 28, 28, 0.15);
 }
 
-/* Checkbox de datos extras */
 .checkbox-extra {
   display: flex;
   align-items: center;
@@ -540,7 +534,6 @@ button:hover {
   margin-top: 6px;
 }
 
-/* Botón pergamino para desplegar info extra del objeto */
 .btn-toggle-info {
   background: transparent;
   border: none;
@@ -565,13 +558,134 @@ button:hover {
   outline: none;
 }
 
-.extra-fields-container select:focus,
-.extra-fields-container textarea:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 3px rgba(115, 22, 28, 0.3);
-}
-
 .extra-fields-container option {
   background-color: #fdfbf7;
   color: #333;
+}
+
+/* ===================================================
+   TRACKER DE CUADRADOS (ESTILO RÚSTICO Y TACHÓN A MANO)
+   =================================================== */
+input[type="checkbox"]:not(.circle-tracker input) {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  outline: none;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  vertical-align: middle;
+  
+  /* Casillero vacío: cuadrado con bordes ligeramente arqueados e irregulares */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15,20 C35,12 75,15 88,22 C95,45 90,80 82,88 C60,95 25,90 15,82 C8,60 12,30 15,20 Z' fill='none' stroke='%237a1c1c' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:not(.circle-tracker input):hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* Casillero marcado: Mantiene el contorno rústico + una cruz / tachón desprolijo adentro */
+input[type="checkbox"]:not(.circle-tracker input):checked {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15,20 C35,12 75,15 88,22 C95,45 90,80 82,88 C60,95 25,90 15,82 C8,60 12,30 15,20 Z' fill='%23f2d2d2' stroke='%237a1c1c' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M25,25 L75,75 M75,25 L25,75' fill='none' stroke='%237a1c1c' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+
+
+/* ===================================================
+   ESTILOS MEDIEVALES PARA MENÚS DESPLEGABLES (SELECT)
+   =================================================== */
+select {
+  background-color: #f5edd6 !important; /* Tono pergamino cálido de tus capturas */
+  border: 1px solid var(--paper-border) !important;
+  color: var(--text-color) !important;
+  font-family: var(--font-body);
+  border-radius: 4px;
+  padding: 6px 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Opciones desplegables con el mismo fondo pergamino */
+select option {
+  background-color: #f5edd6 !important;
+  color: var(--text-color) !important;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+}
+
+/* Hover y selección en tono bordó con texto claro */
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: var(--accent-color) !important;
+  color: #d1be9a !important;
+}
+
+
+
+.tab-icon, .stat-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon-book-light {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z' fill='%23d1be9a'/%3E%3C/svg%3E");
+}
+
+.icon-download-light {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z' fill='%23d1be9a'/%3E%3C/svg%3E");
+}
+
+.icon-upload-light {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z' fill='%23d1be9a'/%3E%3C/svg%3E");
+}
+
+/* Iconos de estadísticas e inventario (Color bordó #7a1c1c) */
+.icon-scroll {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z' fill='%237a1c1c'/%3E%3C/svg%3E");
+}
+
+.icon-dice {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%237a1c1c'%3E%3Cpath d='M141.4 2.3C103-8 63.5 14.8 53.3 53.2L2.5 242.7C-7.8 281.1 15 320.6 53.4 330.9l189.5 50.8c38.4 10.3 77.9-12.5 88.2-50.9l50.8-189.5c10.3-38.4-12.5-77.9-50.9-88.2L141.4 2.3zm23 205.7a32 32 0 1 1 55.4-32 32 32 0 1 1 -55.4 32zM79.2 220.3a32 32 0 1 1 32 55.4 32 32 0 1 1 -32-55.4zm185 96.4a32 32 0 1 1 -32-55.4 32 32 0 1 1 32 55.4zm9-208.4a32 32 0 1 1 32 55.4 32 32 0 1 1 -32-55.4zm-121 14.4a32 32 0 1 1 -32-55.4 32 32 0 1 1 32 55.4zM418 192L377.4 343.2c-17.2 64-83 102-147 84.9l-38.3-10.3 0 30.2c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-192c0-35.3-28.7-64-64-64L418 192z'/%3E%3C/svg%3E");
+}
+
+/* Espada rediseñada, estilizada y limpia */
+.icon-sword {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a1c1c' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m11 19-6-6'/%3E%3Cpath d='m5 21-2-2'/%3E%3Cpath d='m8 16-4 4'/%3E%3Cpath d='M9.5 17.5 20.414 6.586A2 2 0 0021 5.172V3h-2.172a2 2 0 00-1.414.586L6.5 14.5'/%3E%3C/svg%3E");
+}
+
+.icon-shield {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z' fill='%237a1c1c'/%3E%3C/svg%3E");
+}
+
+.icon-search {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z' fill='%237a1c1c'/%3E%3C/svg%3E");
+}
+
+/* Icono Reloj de Arena / Duración (Color bordó #7a1c1c) */
+.icon-hourglass {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 2h12v6l-4 4 4 4v6H6v-6l4-4-4-4V2zm10 14.5l-4-4-4 4V20h8v-3.5zm-8-9V4h8v3.5l-4 4-4-4z' fill='%237a1c1c'/%3E%3C/svg%3E");
+}
+
+/* Icono Lápiz / Edición (Color bordó #7a1c1c) */
+.icon-pencil {
+background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z' fill='%23ffffff'/%3E%3C/svg%3E");}
+
+.icon-save {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6V6z' fill='%23ffffff'/%3E%3C/svg%3E");
 }
