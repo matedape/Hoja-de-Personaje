@@ -2,6 +2,28 @@
 import { currentSlot, MAX_SLOTS, charactersData, formInputIds, setCharactersData, createEmptyCharacter } from './state.js';
 import { renderEquipment, renderBackpack, renderStatuses, renderSkills, updateTrackers } from './renderer.js';
 
+// Mapa de respaldo para convertir fichas viejas (basadas en índices) al nuevo sistema por ID
+const legacyInputMap = {
+  0: 'charName',
+  1: 'charClass',
+  2: 'charSex',
+  3: 'charRace',
+  4: 'charLevel',
+  5: 'charLife',
+  6: 'charExp',
+  7: 'charGold',
+  8: 'attrConstitution',
+  9: 'attrStrength',
+  10: 'attrDexterity',
+  11: 'attrIntelligence',
+  12: 'attrWisdom',
+  13: 'attrCharisma',
+  14: 'attrSpeed',
+  15: 'attrPerception',
+  16: 'attrHitDice',
+  17: 'attrGuard'
+};
+
 export function saveCurrentCharacterData() {
   const container = document.getElementById('sheetCard');
   if (!container) return;
@@ -10,6 +32,7 @@ export function saveCurrentCharacterData() {
   const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
   inputs.forEach((input, index) => {
     if (!formInputIds.includes(input.id)) {
+      // Usamos siempre el ID del input si existe, evitando problemas de índices cruzados
       const key = input.id ? input.id : 'input_' + index;
       inputsData[key] = input.value;
     }
@@ -34,8 +57,22 @@ export function loadCurrentCharacterData() {
   const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
   inputs.forEach((input, index) => {
     if (!formInputIds.includes(input.id)) {
-      const key = input.id ? input.id : 'input_' + index;
-      input.value = char.inputs[key] !== undefined ? char.inputs[key] : (input.defaultValue || '');
+      const explicitId = input.id;
+      const legacyKey = 'input_' + index;
+      
+      // Intentamos buscar por su ID nuevo, y si no está, buscamos en el respaldo viejo (legacy)
+      let value = '';
+      if (explicitId && char.inputs[explicitId] !== undefined) {
+        value = char.inputs[explicitId];
+      } else if (legacyKey && char.inputs[legacyKey] !== undefined) {
+        value = char.inputs[legacyKey]; // Rescata datos de fichas viejas
+      } else if (explicitId && legacyInputMap[index] && char.inputs[legacyInputMap[index]] !== undefined) {
+        value = char.inputs[legacyInputMap[index]];
+      } else {
+        value = input.defaultValue || '';
+      }
+
+      input.value = value;
     }
   });
 
@@ -98,7 +135,7 @@ export function migrateOldDataIfNeeded() {
 export function exportCharacter() {
   saveCurrentCharacterData();
   const characterData = charactersData[currentSlot];
-  const charName = characterData.inputs['input_0'] || `Personaje_${currentSlot}`;
+  const charName = characterData.inputs['charName'] || characterData.inputs['input_0'] || `Personaje_${currentSlot}`;
   const fileName = `${charName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_ficha.json`;
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(characterData, null, 2));
   const downloadAnchor = document.createElement('a');
@@ -138,4 +175,3 @@ export function importCharacter(event) {
   reader.readAsText(file);
   event.target.value = '';
 }
-
