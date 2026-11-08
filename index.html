@@ -326,6 +326,16 @@
             </div>
           </div>
 
+        <div class="form-group">
+            <label>Categorías / Etiquetas</label>
+            <div class="skill-tags-grid" id="skillTagsContainer">
+              <label class="tag-checkbox-label"><input type="checkbox" value="Combate"> <span class="tag-icon-elem icon-sword"></span> Combate</label>
+              <label class="tag-checkbox-label"><input type="checkbox" value="Defensiva"> <span class="tag-icon-elem icon-shield"></span> Defensiva</label>
+              <label class="tag-checkbox-label"><input type="checkbox" value="Apoyo"> <span class="tag-icon-elem icon-apoyo-tag"></span> Apoyo</label>
+              <label class="tag-checkbox-label"><input type="checkbox" value="Movilidad"> <span class="tag-icon-elem icon-movilidad-tag"></span> Movilidad</label>
+              <label class="tag-checkbox-label"><input type="checkbox" value="Utilidad"> <span class="tag-icon-elem icon-utilidad-tag"></span> Utilidad</label>
+            </div>
+         </div>
           <div class="form-group">
             <label>Funcionamiento / Descripción</label>
             <textarea id="skillDesc" class="skill-textarea" placeholder="Escribe el alcance, daño, costo, etc."></textarea>
@@ -337,6 +347,35 @@
         </div>
 
         <div class="section">
+
+         <!-- FILTROS DE TIPO -->
+            <div class="skill-filters-group" id="skillFilterButtons">
+              <button type="button" class="filter-btn active" onclick="filterSkills('type', 'all')" data-filter="all">Todas</button>
+              <button type="button" class="filter-btn filter-activa" onclick="filterSkills('type', 'Activa')" data-filter="Activa">Activas</button>
+              <button type="button" class="filter-btn filter-pasiva" onclick="filterSkills('type', 'Pasiva')" data-filter="Pasiva">Pasivas</button>
+            </div>
+
+      <!-- FILTROS DE ETIQUETAS -->
+        <div class="skill-filters-group" style="margin-top: 6px; display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+        <button type="button" class="filter-tag-btn active" onclick="filterSkills('tag', 'all')" data-tag="all">Todas</button>
+        <button type="button" class="filter-tag-btn filter-tag-icon-btn" onclick="filterSkills('tag', 'Combate')" data-tag="Combate" title="Combate">
+          <span class="tag-icon-elem icon-sword"></span>
+        </button>
+        <button type="button" class="filter-tag-btn filter-tag-icon-btn" onclick="filterSkills('tag', 'Defensiva')" data-tag="Defensiva" title="Defensiva">
+          <span class="tag-icon-elem icon-shield"></span>
+        </button>
+        <button type="button" class="filter-tag-btn filter-tag-icon-btn" onclick="filterSkills('tag', 'Apoyo')" data-tag="Apoyo" title="Apoyo">
+          <span class="tag-icon-elem icon-apoyo-tag"></span>
+        </button>
+        <button type="button" class="filter-tag-btn filter-tag-icon-btn" onclick="filterSkills('tag', 'Movilidad')" data-tag="Movilidad" title="Movilidad">
+          <span class="tag-icon-elem icon-movilidad-tag"></span>
+        </button>
+        <button type="button" class="filter-tag-btn filter-tag-icon-btn" onclick="filterSkills('tag', 'Utilidad')" data-tag="Utilidad" title="Utilidad">
+          <span class="tag-icon-elem icon-utilidad-tag"></span>
+        </button>
+      </div>
+
+
           <div class="form-group search-box">
             <label><span class="stat-icon icon-search"></span> Buscar Habilidad</label>
             <input type="text" id="skillSearch" placeholder="Escribe para filtrar..." oninput="renderSkills()">
@@ -348,678 +387,65 @@
 
     </div>
   </div>
+<button type="button" id="floatingDiceBtn" class="floating-dice-btn" title="Lanzador de Dados Libre">
+    <span class="tab-icon icon-dice" style="filter: brightness(0) invert(1);"></span>
+  </button>
+
+
+  <!-- MODAL DE DADOS -->
+  <div id="diceModalOverlay" class="dice-modal-overlay" style="display: none;">
+    <div class="dice-modal-card">
+      <h3 style="font-family: var(--font-title); color: var(--accent-color); text-align: center; margin-bottom: 12px;">Tirada Libre de Dados</h3>
+      
+      <div class="form-group" style="margin-bottom: 8px;">
+        <label>Cantidad de Dados</label>
+        <input type="number" id="diceCountInput" value="1" min="1" max="100">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 8px;">
+        <label>Tipo de Dado</label>
+        <select id="diceTypeSelect" class="skill-select">
+          <option value="4">d4 (4 caras)</option>
+          <option value="6">d6 (6 caras)</option>
+          <option value="8">d8 (8 caras)</option>
+          <option value="10">d10 (10 caras)</option>
+          <option value="12" selected>d12 (12 caras)</option>
+          <option value="20">d20 (20 caras)</option>
+          <option value="100">d100 (100 caras)</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Modificador (Opcional)</label>
+        <input type="number" id="diceModifierInput" value="0">
+      </div>
+
+      <button type="button" id="executeRollBtn" class="btn-action" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+        ¡Tirar Dados!
+      </button>
+
+      <!-- RESULTADO -->
+      <div id="diceResultContainer" style="display: none; text-align: center; margin-top: 10px; border-top: 1px dashed var(--paper-border); padding-top: 10px;">
+        <div id="critBanner" style="display: none; font-family: var(--font-title); color: #b8860b; font-size: 1.1rem; margin-bottom: 4px; text-shadow: 0 0 4px rgba(218,165,32,0.5);">🌟 ¡CRÍTICO MÁXIMO! 🌟</div>
+        <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: bold; color: var(--accent-color);">Total obtenido:</div>
+        <div id="diceTotalDisplay" style="font-size: 2.2rem; font-weight: bold; color: var(--accent-color); margin: 4px 0;">0</div>
+        
+        <button type="button" id="toggleDetailsBtn" style="background: transparent; border: none; color: var(--accent-color); font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 4px;">Ver detalle de dados</button>
+        <div id="diceDetailsList" style="display: none; font-size: 0.85rem; margin-top: 6px; max-height: 80px; overflow-y: auto; background: rgba(255,255,255,0.5); padding: 6px; border-radius: 4px; border: 1px solid var(--paper-border);"></div>
+      </div>
+
+      <button type="button" id="closeDiceModalBtn" class="btn-action" style="background: #4a0000; width: 100%; justify-content: center; margin-top: 12px;">
+        Cerrar
+      </button>
+    </div>
+  </div>
 
   <!-- INPUT OCULTO COMPARTIDO PARA IMPORTAR -->
   <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importCharacter(event)">
 
   <!-- SCRIPT CON LÓGICA DE MULTIPERSONAJE Y DATOS -->
-  <script>
-    // --- ESTADO GLOBAL ---
-    let currentSlot = 1;
-    const MAX_SLOTS = 3;
+  <script type="module" src="js/main.js"></script>
 
-    let charactersData = {
-      1: createEmptyCharacter(),
-      2: createEmptyCharacter(),
-      3: createEmptyCharacter()
-    };
-
-    let editingSkillId = null;
-
-    const formInputIds = [
-      'statusName', 'statusDuration', 
-      'equipName', 'equipQty', 'equipDice', 'equipDamageType', 'equipRange', 'equipGuard', 'equipBonusStats', 'equipRarity', 'equipDesc',
-      'bagName', 'bagQty', 'bagDice', 'bagDamageType', 'bagRange', 'bagGuard', 'bagBonusStats', 'bagRarity', 'bagDesc',
-      'skillName', 'skillSearch', 'skillCooldown'
-    ];
-
-    function createEmptyCharacter() {
-      return {
-        inputs: {},
-        checkboxes: [],
-        equipment: [],
-        backpack: [],
-        statuses: [],
-        skills: []
-      };
-    }
-
-    // --- PESTAÑAS (P1, P2, P3) ---
-    window.renderTabs = function() {
-      const tabHeader = document.querySelector('.npc-tab-header');
-      if (!tabHeader) return;
-
-      tabHeader.innerHTML = `
-        <button type="button" class="tab-btn ${currentSlot === 1 ? 'active' : ''}" onclick="switchSlot(1)">P1</button>
-        <button type="button" class="tab-btn ${currentSlot === 2 ? 'active' : ''}" onclick="switchSlot(2)">P2</button>
-        <button type="button" class="tab-btn ${currentSlot === 3 ? 'active' : ''}" onclick="switchSlot(3)">P3</button>
-      `;
-    }
-
-    window.switchSlot = function(newSlot) {
-      if (newSlot === currentSlot) return;
-      saveCurrentCharacterData();
-      currentSlot = newSlot;
-      loadCurrentCharacterData();
-      renderTabs();
-    }
-
-    window.addNewCharacterSlot = function() {
-      let nextSlot = (currentSlot % MAX_SLOTS) + 1;
-      switchSlot(nextSlot);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      loadAllSlotsFromStorage();
-      migrateOldDataIfNeeded();
-      renderTabs();
-      loadCurrentCharacterData();
-
-      document.addEventListener('input', (e) => {
-        if (formInputIds.includes(e.target.id)) return;
-        saveCurrentCharacterData();
-      });
-
-      document.addEventListener('change', (e) => {
-        saveCurrentCharacterData();
-        if (e.target.classList.contains('save-cb') || e.target.classList.contains('food-cb') || e.target.classList.contains('energy-cb')) {
-          updateTrackers();
-        }
-      });
-    });
-
-    function saveCurrentCharacterData() {
-      const container = document.getElementById('sheetCard');
-      if (!container) return;
-
-      const inputsData = {};
-      const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
-      inputs.forEach((input, index) => {
-        if (!formInputIds.includes(input.id)) {
-          const key = input.id ? input.id : 'input_' + index;
-          inputsData[key] = input.value;
-        }
-      });
-
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-      const cbData = Array.from(checkboxes).map(cb => cb.checked);
-
-      charactersData[currentSlot].inputs = inputsData;
-      charactersData[currentSlot].checkboxes = cbData;
-
-      localStorage.setItem('dnd_multichar_data', JSON.stringify(charactersData));
-      localStorage.setItem('dnd_active_slot', currentSlot);
-    }
-
-    function loadCurrentCharacterData() {
-      const container = document.getElementById('sheetCard');
-      if (!container) return;
-
-      const char = charactersData[currentSlot] || createEmptyCharacter();
-
-      const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
-      inputs.forEach((input, index) => {
-        if (!formInputIds.includes(input.id)) {
-          const key = input.id ? input.id : 'input_' + index;
-          input.value = char.inputs[key] !== undefined ? char.inputs[key] : (input.defaultValue || '');
-        }
-      });
-
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((cb, index) => {
-        cb.checked = char.checkboxes[index] !== undefined ? char.checkboxes[index] : false;
-      });
-
-      renderEquipment();
-      renderBackpack();
-      renderStatuses();
-      renderSkills();
-      updateTrackers();
-    }
-
-    function loadAllSlotsFromStorage() {
-      const savedData = localStorage.getItem('dnd_multichar_data');
-      if (savedData) {
-        try {
-          charactersData = JSON.parse(savedData);
-        } catch (e) {
-          console.error("Error al cargar datos:", e);
-        }
-      }
-      const savedSlot = parseInt(localStorage.getItem('dnd_active_slot'));
-      if (savedSlot && savedSlot >= 1 && savedSlot <= MAX_SLOTS) {
-        currentSlot = savedSlot;
-      }
-    }
-
-    window.toggleSheetFace = function() {
-      const card = document.getElementById('sheetCard');
-      card.classList.toggle('flipped');
-    }
-
-    // --- RENDERIZADO DE EQUIPAMIENTO ---
-    window.renderEquipment = function() {
-      const container = document.getElementById('equipmentList');
-      if (!container) return;
-      container.innerHTML = '';
-      const equipment = charactersData[currentSlot].equipment || [];
-
-      equipment.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'item-card-wrapper';
-        const detailsId = `equip-details-${index}`;
-
-        let badgesHTML = '';
-        if (item.hasDetails) {
-          if (item.dice) badgesHTML += `<span class="badge-stat"><span class="stat-icon icon-dice"></span> ${item.dice}</span>`;
-          if (item.damageType) badgesHTML += `<span class="badge-stat"><span class="stat-icon icon-sword"></span> ${item.damageType}</span>`;
-          if (item.guard) badgesHTML += `<span class="badge-stat"><span class="stat-icon icon-shield"></span> Guardia ${item.guard}</span>`;
-        }
-
-        const hasExtraInfo = item.hasDetails && (item.rarity || item.bonusStats || item.range || item.desc);
-
-        card.innerHTML = `
-          <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              ${hasExtraInfo ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')"><span class="tab-icon icon-scroll"></span></button>` : ''}
-              <span style="font-weight: bold;">${item.name}</span>
-              ${badgesHTML}
-            </div>
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <button type="button" class="btn-qty" onclick="moveItem('equip', ${index}, -1)">▲</button>
-              <button type="button" class="btn-qty" onclick="moveItem('equip', ${index}, 1)">▼</button>
-              <button type="button" class="btn-qty" onclick="changeItemQty('equip', ${index}, -1)">–</button>
-              <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
-              <button type="button" class="btn-qty" onclick="changeItemQty('equip', ${index}, 1)">+</button>
-              <button type="button" class="btn-delete" onclick="deleteItem('equip', ${index})">✕</button>
-            </div>
-          </div>
-          ${hasExtraInfo ? `
-            <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 8px 12px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); font-size: 0.85rem;">
-              ${item.rarity ? `<div style="color: #7a1c1c; font-weight: bold; font-size: 0.9rem;">${item.rarity}</div>` : ''}
-              ${item.bonusStats ? `<div><strong>Stats:</strong> ${item.bonusStats}</div>` : ''}
-              ${item.range ? `<div><strong>Alcance:</strong> ${item.range}</div>` : ''}
-              ${item.effectType && item.desc ? `<div style="margin-top: 4px;"><strong>[${item.effectType}]:</strong> ${item.desc}</div>` : (item.desc ? `<div style="margin-top: 4px;">${item.desc}</div>` : '')}
-            </div>
-          ` : ''}
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // --- RENDERIZADO DE MOCHILA ---
-    window.renderBackpack = function() {
-      const container = document.getElementById('bagList');
-      if (!container) return;
-      container.innerHTML = '';
-      const backpack = charactersData[currentSlot].backpack || [];
-
-      backpack.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'item-card-wrapper';
-        const detailsId = `bag-details-${index}`;
-
-        let badgesHTML = '';
-        if (item.hasDetails) {
-          if (item.dice) badgesHTML += `<span class="badge-stat"><span class="stat-icon icon-dice"></span> ${item.dice}</span>`;
-          if (item.damageType) badgesHTML += `<span class="badge-stat"><span class="stat-icon icon-sword"></span> ${item.damageType}</span>`;
-          if (item.guard) badgesHTML += `<span class="badge-stat"><span class="stat-icon icon-shield"></span> Guardia ${item.guard}</span>`;
-        }
-
-        const hasExtraInfo = item.hasDetails && (item.rarity || item.bonusStats || item.range || item.desc);
-
-        card.innerHTML = `
-          <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.6); border: 1px solid var(--paper-border); border-radius: 4px; margin-bottom: 4px;">
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              ${hasExtraInfo ? `<button type="button" class="btn-toggle-info" onclick="toggleItemDetails('${detailsId}')"><span class="tab-icon icon-scroll"></span></button>` : ''}
-              <span style="font-weight: bold; text-transform: uppercase;">${item.name}</span>
-              ${badgesHTML}
-            </div>
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <button type="button" class="btn-qty" onclick="moveItem('backpack', ${index}, -1)">▲</button>
-              <button type="button" class="btn-qty" onclick="moveItem('backpack', ${index}, 1)">▼</button>
-              <button type="button" class="btn-qty" onclick="changeItemQty('backpack', ${index}, -1)">–</button>
-              <span style="font-weight: bold; min-width: 24px; text-align: center;">x${item.qty}</span>
-              <button type="button" class="btn-qty" onclick="changeItemQty('backpack', ${index}, 1)">+</button>
-              <button type="button" class="btn-delete" onclick="deleteItem('backpack', ${index})">✕</button>
-            </div>
-          </div>
-          ${hasExtraInfo ? `
-            <div id="${detailsId}" class="item-extra-info" style="display: none; padding: 8px 12px; margin-top: -3px; margin-bottom: 6px; background: rgba(0,0,0,0.03); border: 1px dashed var(--paper-border); font-size: 0.85rem;">
-              ${item.rarity ? `<div style="color: #7a1c1c; font-weight: bold; font-size: 0.9rem;">${item.rarity}</div>` : ''}
-              ${item.bonusStats ? `<div><strong>Stats:</strong> ${item.bonusStats}</div>` : ''}
-              ${item.range ? `<div><strong>Alcance:</strong> ${item.range}</div>` : ''}
-              ${item.effectType && item.desc ? `<div style="margin-top: 4px;"><strong>[${item.effectType}]:</strong> ${item.desc}</div>` : (item.desc ? `<div style="margin-top: 4px;">${item.desc}</div>` : '')}
-            </div>
-          ` : ''}
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    window.renderSkills = function() {
-      const list = document.getElementById('skillsList');
-      const searchInput = document.getElementById('skillSearch');
-      if (!list) return;
-
-      const skills = charactersData[currentSlot].skills || [];
-      const filter = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      list.innerHTML = '';
-
-      if (filter === '') {
-        skills.sort((a, b) => (a.isFavorite === b.isFavorite ? 0 : a.isFavorite ? -1 : 1));
-      }
-
-      const filteredSkills = skills.filter(skill => 
-        skill.name.toLowerCase().includes(filter) || 
-        skill.desc.toLowerCase().includes(filter) ||
-        (skill.type && skill.type.toLowerCase().includes(filter))
-      );
-
-      if (filteredSkills.length === 0) {
-        list.innerHTML = '<p style="font-style: italic; font-size: 0.85rem; text-align: center; color: var(--accent-color);">No hay habilidades que coincidan.</p>';
-        return;
-      }
-
-      filteredSkills.forEach((skill) => {
-        const realIndex = skills.findIndex(s => s.id === skill.id);
-        const card = document.createElement('div');
-        card.className = `skill-card ${skill.isFavorite ? 'favorite-card' : ''}`;
-
-        const typeClass = (skill.type || 'Activa').toLowerCase();
-        const cooldownHTML = skill.cooldown && skill.cooldown.trim() !== '' ? `<span class="badge-cooldown"><span class="stat-icon icon-hourglass"></span> ${skill.cooldown}</span>` : '';
-        const starIcon = skill.isFavorite ? '★' : '☆';
-
-        card.innerHTML = `
-          <div class="skill-card-header">
-            <div class="skill-badges">
-              <button type="button" class="btn-fav ${skill.isFavorite ? 'active' : ''}" onclick="toggleFavoriteSkill(${skill.id})">${starIcon}</button>
-              <span class="skill-card-title">${skill.name}</span>
-              <span class="badge-type ${typeClass}">${skill.type || 'Activa'}</span>
-              ${cooldownHTML}
-            </div>
-            <div style="display: flex; gap: 4px; align-items: center;">
-              ${filter === '' ? `
-                <button type="button" class="btn-qty" onclick="moveSkill(${realIndex}, -1)">▲</button>
-                <button type="button" class="btn-qty" onclick="moveSkill(${realIndex}, 1)">▼</button>
-              ` : ''}
-                <button type="button" class="btn-qty" onclick="editSkill(${skill.id})"><span class="tab-icon icon-pencil"></span></button>              <button type="button" class="btn-delete" onclick="deleteSkill(${skill.id})">✕</button>
-            </div>
-          </div>
-          <div class="skill-card-desc">${skill.desc}</div>
-        `;
-        list.appendChild(card);
-      });
-    }
-
-window.renderStatuses = function() {
-      const list = document.getElementById('statusList');
-      if (!list) return;
-      list.innerHTML = '';
-      const statuses = charactersData[currentSlot].statuses || [];
-
-      statuses.forEach(status => {
-        const li = document.createElement('li');
-        li.className = 'item-card status-card';
-        const rawDuration = status.duration ? status.duration.trim() : '';
-        const isNumeric = rawDuration !== '' && !isNaN(parseInt(rawDuration));
-        
-        let durationHTML = isNumeric ? `
-          <div class="item-controls">
-            <button type="button" class="btn-qty" onclick="changeStatusQty(${status.id}, -1)">-</button>
-            <span class="status-badge"><span class="stat-icon icon-hourglass"></span> ${rawDuration}</span>
-            <button type="button" class="btn-qty" onclick="changeStatusQty(${status.id}, 1)">+</button>
-          </div>
-        ` : (rawDuration !== '' ? `<span class="status-badge"><span class="stat-icon icon-hourglass"></span> ${rawDuration}</span>` : '');
-
-        li.innerHTML = `
-          <span><strong>${status.name}</strong></span>
-          <div class="item-controls">
-            ${durationHTML}
-            <button type="button" class="btn-delete" onclick="deleteStatus(${status.id})">✕</button>
-          </div>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    // --- ACCIONES Y CRUD ---
-    window.addEquipment = function() {
-      const nameInput = document.getElementById('equipName');
-      const qtyInput = document.getElementById('equipQty');
-      const hasDetails = document.getElementById('equipHasDetails').checked;
-      if (!nameInput || nameInput.value.trim() === '') return;
-
-      const newItem = {
-        id: Date.now(),
-        name: nameInput.value.trim(),
-        qty: parseInt(qtyInput.value) || 1,
-        hasDetails: hasDetails
-      };
-
-      if (hasDetails) {
-        newItem.category = document.getElementById('equipCategory').value;
-        newItem.effectType = document.getElementById('equipEffectType').value;
-        newItem.rarity = document.getElementById('equipRarity').value.trim();
-        newItem.desc = document.getElementById('equipDesc').value.trim();
-        if (newItem.category === 'weapon') {
-          newItem.dice = document.getElementById('equipDice').value.trim();
-          newItem.damageType = document.getElementById('equipDamageType').value.trim();
-          newItem.range = document.getElementById('equipRange').value.trim();
-        } else if (newItem.category === 'armor') {
-          newItem.guard = document.getElementById('equipGuard').value.trim();
-          newItem.bonusStats = document.getElementById('equipBonusStats').value.trim();
-        }
-      }
-
-      charactersData[currentSlot].equipment.push(newItem);
-      nameInput.value = '';
-      qtyInput.value = '1';
-      document.getElementById('equipHasDetails').checked = false;
-      toggleExtraFields('equip');
-      renderEquipment();
-      saveCurrentCharacterData();
-    }
-
-    window.addBagItem = function() {
-      const nameInput = document.getElementById('bagName');
-      const qtyInput = document.getElementById('bagQty');
-      const hasDetails = document.getElementById('bagHasDetails').checked;
-      if (!nameInput || nameInput.value.trim() === '') return;
-
-      const newItem = {
-        id: Date.now(),
-        name: nameInput.value.trim(),
-        qty: parseInt(qtyInput.value) || 1,
-        hasDetails: hasDetails
-      };
-
-      if (hasDetails) {
-        newItem.category = document.getElementById('bagCategory').value;
-        newItem.effectType = document.getElementById('bagEffectType').value;
-        newItem.rarity = document.getElementById('bagRarity').value.trim();
-        newItem.desc = document.getElementById('bagDesc').value.trim();
-        if (newItem.category === 'weapon') {
-          newItem.dice = document.getElementById('bagDice').value.trim();
-          newItem.damageType = document.getElementById('bagDamageType').value.trim();
-          newItem.range = document.getElementById('bagRange').value.trim();
-        } else if (newItem.category === 'armor') {
-          newItem.guard = document.getElementById('bagGuard').value.trim();
-          newItem.bonusStats = document.getElementById('bagBonusStats').value.trim();
-        }
-      }
-
-      charactersData[currentSlot].backpack.push(newItem);
-      nameInput.value = '';
-      qtyInput.value = '1';
-      document.getElementById('bagHasDetails').checked = false;
-      toggleExtraFields('bag');
-      renderBackpack();
-      saveCurrentCharacterData();
-    }
-
-    window.addSkill = function() {
-      const nameInput = document.getElementById('skillName');
-      const typeSelect = document.getElementById('skillType');
-      const cooldownInput = document.getElementById('skillCooldown');
-      const descInput = document.getElementById('skillDesc');
-      if (!nameInput || nameInput.value.trim() === '') return;
-      const skills = charactersData[currentSlot].skills;
-
-      if (editingSkillId !== null) {
-        const skill = skills.find(s => s.id === editingSkillId);
-        if (skill) {
-          skill.name = nameInput.value.trim();
-          skill.type = typeSelect ? typeSelect.value : 'Activa';
-          skill.cooldown = cooldownInput ? cooldownInput.value.trim() : '';
-          skill.desc = descInput ? descInput.value.trim() : '';
-        }
-        editingSkillId = null;
-        document.getElementById('btnSaveSkill').textContent = '+ Agregar Habilidad';
-      } else {
-        skills.push({
-          id: Date.now(),
-          name: nameInput.value.trim(),
-          type: typeSelect ? typeSelect.value : 'Activa',
-          cooldown: cooldownInput ? cooldownInput.value.trim() : '',
-          desc: descInput ? descInput.value.trim() : '',
-          isFavorite: false
-        });
-      }
-
-      nameInput.value = '';
-      if (cooldownInput) cooldownInput.value = '';
-      if (descInput) descInput.value = '';
-      renderSkills();
-      saveCurrentCharacterData();
-    }
-
-    window.addStatus = function() {
-      const nameInput = document.getElementById('statusName');
-      const durationInput = document.getElementById('statusDuration');
-      if (!nameInput || nameInput.value.trim() === '') return;
-
-      charactersData[currentSlot].statuses.push({
-        id: Date.now(),
-        name: nameInput.value.trim(),
-        duration: durationInput ? durationInput.value.trim() : ''
-      });
-
-      nameInput.value = '';
-      if (durationInput) durationInput.value = '';
-      renderStatuses();
-      saveCurrentCharacterData();
-    }
-
-    window.changeItemQty = function(storageKey, index, delta) {
-      const list = storageKey === 'equip' ? charactersData[currentSlot].equipment : charactersData[currentSlot].backpack;
-      if (list[index]) {
-        list[index].qty += delta;
-        if (list[index].qty <= 0) list.splice(index, 1);
-        if (storageKey === 'equip') renderEquipment();
-        else renderBackpack();
-        saveCurrentCharacterData();
-      }
-    }
-
-    window.deleteItem = function(storageKey, index) {
-      if (storageKey === 'equip') {
-        charactersData[currentSlot].equipment.splice(index, 1);
-        renderEquipment();
-      } else {
-        charactersData[currentSlot].backpack.splice(index, 1);
-        renderBackpack();
-      }
-      saveCurrentCharacterData();
-    }
-
-    window.deleteSkill = function(id) {
-      charactersData[currentSlot].skills = charactersData[currentSlot].skills.filter(s => s.id !== id);
-      renderSkills();
-      saveCurrentCharacterData();
-    }
-
-    window.deleteStatus = function(id) {
-      charactersData[currentSlot].statuses = charactersData[currentSlot].statuses.filter(s => s.id !== id);
-      renderStatuses();
-      saveCurrentCharacterData();
-    }
-
-    window.toggleFavoriteSkill = function(id) {
-      const skill = charactersData[currentSlot].skills.find(s => s.id === id);
-      if (skill) {
-        skill.isFavorite = !skill.isFavorite;
-        renderSkills();
-        saveCurrentCharacterData();
-      }
-    }
-
-    window.editSkill = function(id) {
-      const skill = charactersData[currentSlot].skills.find(s => s.id === id);
-      if (!skill) return;
-      document.getElementById('skillName').value = skill.name;
-      document.getElementById('skillType').value = skill.type || 'Activa';
-      document.getElementById('skillCooldown').value = skill.cooldown || '';
-      document.getElementById('skillDesc').value = skill.desc || '';
-      editingSkillId = id;
-      document.getElementById('btnSaveSkill').innerHTML = '<span class="tab-icon icon-save"></span> Guardar Cambios';      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    window.moveItem = function(type, index, direction) {
-      const list = type === 'equip' ? charactersData[currentSlot].equipment : charactersData[currentSlot].backpack;
-      const targetIndex = index + direction;
-      if (targetIndex >= 0 && targetIndex < list.length) {
-        const temp = list[index];
-        list[index] = list[targetIndex];
-        list[targetIndex] = temp;
-        if (type === 'equip') renderEquipment();
-        else renderBackpack();
-        saveCurrentCharacterData();
-      }
-    }
-
-    window.moveSkill = function(index, direction) {
-      const skills = charactersData[currentSlot].skills;
-      const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= skills.length) return;
-      const currentSkill = skills[index];
-      const targetSkill = skills[targetIndex];
-      if (currentSkill.isFavorite && !targetSkill.isFavorite) return;
-      if (!currentSkill.isFavorite && targetSkill.isFavorite) return;
-      skills[index] = targetSkill;
-      skills[targetIndex] = currentSkill;
-      renderSkills();
-      saveCurrentCharacterData();
-    }
-
-    window.changeStatusQty = function(id, delta) {
-      const status = charactersData[currentSlot].statuses.find(s => s.id === id);
-      if (status) {
-        let current = parseInt(status.duration);
-        if (!isNaN(current)) {
-          current += delta;
-          if (current <= 0) {
-            deleteStatus(id);
-            return;
-          }
-          status.duration = current.toString();
-          renderStatuses();
-          saveCurrentCharacterData();
-        }
-      }
-    }
-
-    window.updateItemCategoryFields = function(prefix) {
-      const category = document.getElementById(`${prefix}Category`).value;
-      const weaponFields = document.getElementById(`${prefix}FieldsWeapon`);
-      const armorFields = document.getElementById(`${prefix}FieldsArmor`);
-      if (weaponFields) weaponFields.style.display = (category === 'weapon') ? 'grid' : 'none';
-      if (armorFields) armorFields.style.display = (category === 'armor') ? 'grid' : 'none';
-    }
-
-    window.toggleExtraFields = function(prefix) {
-      const check = document.getElementById(`${prefix}HasDetails`);
-      const container = document.getElementById(`${prefix}ExtraFields`);
-      if (check && container) {
-        container.style.display = check.checked ? 'block' : 'none';
-        if (check.checked) updateItemCategoryFields(prefix);
-      }
-    }
-
-    window.toggleItemDetails = function(elementId) {
-      const detailsDiv = document.getElementById(elementId);
-      if (detailsDiv) {
-        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
-      }
-    }
-
-    function updateTrackers() {
-      const saveBoxes = document.querySelectorAll('.save-cb');
-      const saveChecked = document.querySelectorAll('.save-cb:checked').length;
-      const saveCountElem = document.getElementById('saveCount');
-      const energyBoxes = document.querySelectorAll('.energy-cb');
-      const energyChecked = document.querySelectorAll('.energy-cb:checked').length;
-      const energyCountElem = document.getElementById('energyCount');
-
-      if (energyCountElem) energyCountElem.textContent = energyBoxes.length - energyChecked;
-      if (saveCountElem) saveCountElem.textContent = saveBoxes.length - saveChecked;
-
-      const foodBoxes = document.querySelectorAll('.food-cb');
-      const foodChecked = document.querySelectorAll('.food-cb:checked').length;
-      const foodCountElem = document.getElementById('foodCount');
-      if (foodCountElem) foodCountElem.textContent = foodBoxes.length - foodChecked;
-    }
-
-    function migrateOldDataIfNeeded() {
-      const oldInputs = localStorage.getItem('dnd_sheet_inputs');
-      const oldEquipment = localStorage.getItem('dnd_sheet_equipment');
-      const oldBackpack = localStorage.getItem('dnd_sheet_backpack');
-      const oldStatuses = localStorage.getItem('dnd_sheet_statuses');
-      const oldSkills = localStorage.getItem('dnd_sheet_skills');
-
-      if (oldInputs || oldEquipment || oldBackpack || oldStatuses || oldSkills) {
-        if (!localStorage.getItem('dnd_multichar_data')) {
-          charactersData[1] = {
-            inputs: oldInputs ? JSON.parse(oldInputs) : {},
-            checkboxes: [],
-            equipment: oldEquipment ? JSON.parse(oldEquipment) : [],
-            backpack: oldBackpack ? JSON.parse(oldBackpack) : [],
-            statuses: oldStatuses ? JSON.parse(oldStatuses) : [],
-            skills: oldSkills ? JSON.parse(oldSkills) : []
-          };
-          localStorage.setItem('dnd_multichar_data', JSON.stringify(charactersData));
-          localStorage.removeItem('dnd_sheet_inputs');
-          localStorage.removeItem('dnd_sheet_equipment');
-          localStorage.removeItem('dnd_sheet_backpack');
-          localStorage.removeItem('dnd_sheet_statuses');
-          localStorage.removeItem('dnd_sheet_skills');
-        }
-      }
-    }
-
-    window.exportCharacter = function() {
-      saveCurrentCharacterData();
-      const characterData = charactersData[currentSlot];
-      const charName = characterData.inputs['input_0'] || `Personaje_${currentSlot}`;
-      const fileName = `${charName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_ficha.json`;
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(characterData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", fileName);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    window.triggerImport = function() {
-      document.getElementById('importFileInput').click();
-    }
-
-    window.importCharacter = function(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const data = JSON.parse(e.target.result);
-          charactersData[currentSlot] = {
-            inputs: data.inputs || {},
-            checkboxes: data.checkboxes || [],
-            equipment: data.equipment || [],
-            backpack: data.backpack || [],
-            statuses: data.statuses || [],
-            skills: data.skills || []
-          };
-          loadCurrentCharacterData();
-          saveCurrentCharacterData();
-          alert(`¡Personaje cargado correctamente en el Slot ${currentSlot}!`);
-        } catch (err) {
-          alert('Error al leer el archivo JSON.');
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    }
-  </script>
+  <script type="module" src="js/dice.js"></script>
 </body>
 </html>
