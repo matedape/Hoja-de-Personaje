@@ -1,5 +1,13 @@
 // --- MÓDULO DE PERSISTENCIA Y ALMACENAMIENTO ---
-import { currentSlot, MAX_SLOTS, charactersData, formInputIds, setCharactersData, createEmptyCharacter } from './state.js';
+import {
+  currentSlot,
+  MAX_SLOTS,
+  charactersData,
+  formInputIds,
+  setCharactersData,
+  createEmptyCharacter,
+  normalizeCharacter
+} from './state.js';
 import { renderEquipment, renderBackpack, renderStatuses, renderSkills, updateTrackers } from './renderer.js';
 
 // Mapa de respaldo para convertir fichas viejas (basadas en índices) al nuevo sistema por ID
@@ -28,11 +36,12 @@ export function saveCurrentCharacterData() {
   const container = document.getElementById('sheetCard');
   if (!container) return;
 
+  const currentChar = normalizeCharacter(charactersData[currentSlot]);
   const inputsData = {};
   const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
+
   inputs.forEach((input, index) => {
     if (!formInputIds.includes(input.id)) {
-      // Usamos siempre el ID del input si existe, evitando problemas de índices cruzados
       const key = input.id ? input.id : 'input_' + index;
       inputsData[key] = input.value;
     }
@@ -41,31 +50,34 @@ export function saveCurrentCharacterData() {
   const checkboxes = container.querySelectorAll('input[type="checkbox"]');
   const cbData = Array.from(checkboxes).map(cb => cb.checked);
 
-  charactersData[currentSlot].inputs = inputsData;
-  charactersData[currentSlot].checkboxes = cbData;
+  charactersData[currentSlot] = {
+    ...currentChar,
+    inputs: inputsData,
+    checkboxes: cbData
+  };
 
   localStorage.setItem('dnd_multichar_data', JSON.stringify(charactersData));
-  localStorage.setItem('dnd_active_slot', currentSlot);
+  localStorage.setItem('dnd_active_slot', String(currentSlot));
 }
 
 export function loadCurrentCharacterData() {
   const container = document.getElementById('sheetCard');
   if (!container) return;
 
-  const char = charactersData[currentSlot] || createEmptyCharacter();
+  const char = normalizeCharacter(charactersData[currentSlot] || createEmptyCharacter());
+  charactersData[currentSlot] = char;
 
   const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
   inputs.forEach((input, index) => {
     if (!formInputIds.includes(input.id)) {
       const explicitId = input.id;
       const legacyKey = 'input_' + index;
-      
-      // Intentamos buscar por su ID nuevo, y si no está, buscamos en el respaldo viejo (legacy)
+
       let value = '';
       if (explicitId && char.inputs[explicitId] !== undefined) {
         value = char.inputs[explicitId];
       } else if (legacyKey && char.inputs[legacyKey] !== undefined) {
-        value = char.inputs[legacyKey]; // Rescata datos de fichas viejas
+        value = char.inputs[legacyKey];
       } else if (explicitId && legacyInputMap[index] && char.inputs[legacyInputMap[index]] !== undefined) {
         value = char.inputs[legacyInputMap[index]];
       } else {
@@ -78,7 +90,7 @@ export function loadCurrentCharacterData() {
 
   const checkboxes = container.querySelectorAll('input[type="checkbox"]');
   checkboxes.forEach((cb, index) => {
-    cb.checked = char.checkboxes[index] !== undefined ? char.checkboxes[index] : false;
+    cb.checked = char.checkboxes[index] !== undefined ? Boolean(char.checkboxes[index]) : false;
   });
 
   renderEquipment();
@@ -96,9 +108,13 @@ export function loadAllSlotsFromStorage() {
       setCharactersData(parsed);
     } catch (e) {
       console.error("Error al cargar datos:", e);
+      setCharactersData({});
     }
+  } else {
+    setCharactersData({});
   }
-  const savedSlot = parseInt(localStorage.getItem('dnd_active_slot'));
+
+  const savedSlot = parseInt(localStorage.getItem('dnd_active_slot'), 10);
   if (savedSlot && savedSlot >= 1 && savedSlot <= MAX_SLOTS) {
     return savedSlot;
   }
@@ -114,14 +130,16 @@ export function migrateOldDataIfNeeded() {
 
   if (oldInputs || oldEquipment || oldBackpack || oldStatuses || oldSkills) {
     if (!localStorage.getItem('dnd_multichar_data')) {
-      charactersData[1] = {
+      const migratedChar = normalizeCharacter({
         inputs: oldInputs ? JSON.parse(oldInputs) : {},
         checkboxes: [],
         equipment: oldEquipment ? JSON.parse(oldEquipment) : [],
         backpack: oldBackpack ? JSON.parse(oldBackpack) : [],
         statuses: oldStatuses ? JSON.parse(oldStatuses) : [],
         skills: oldSkills ? JSON.parse(oldSkills) : []
-      };
+      });
+
+      setCharactersData({ 1: migratedChar });
       localStorage.setItem('dnd_multichar_data', JSON.stringify(charactersData));
       localStorage.removeItem('dnd_sheet_inputs');
       localStorage.removeItem('dnd_sheet_equipment');
@@ -134,9 +152,16 @@ export function migrateOldDataIfNeeded() {
 
 export function exportCharacter() {
   saveCurrentCharacterData();
-  const characterData = charactersData[currentSlot];
-  const charName = characterData.inputs['charName'] || characterData.inputs['input_0'] || `Personaje_${currentSlot}`;
-  const fileName = `${charName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_ficha.json`;
+  const characterData = normalizeCharacter(charactersData[currentSlot]);
+  const rawName = characterData.inputs?.charName || characterData.inputs?.input_0 || `Personaje_${currentSlot}`;
+  const cleanName = rawName
+    .trim()
+    .replace(/[^a-z0-9]+/gi, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase() || `personaje_${currentSlot}`;
+
+  const timestamp = formatExportTimestamp();
+  const fileName = `${cleanName}_ficha_${timestamp}.json`;
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(characterData, null, 2));
   const downloadAnchor = document.createElement('a');
   downloadAnchor.setAttribute("href", dataStr);
@@ -157,21 +182,30 @@ export function importCharacter(event) {
   reader.onload = function(e) {
     try {
       const data = JSON.parse(e.target.result);
-      charactersData[currentSlot] = {
-        inputs: data.inputs || {},
-        checkboxes: data.checkboxes || [],
-        equipment: data.equipment || [],
-        backpack: data.backpack || [],
-        statuses: data.statuses || [],
-        skills: data.skills || []
-      };
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('Formato de ficha no válido');
+      }
+      const normalized = normalizeCharacter(data);
+      charactersData[currentSlot] = normalized;
       loadCurrentCharacterData();
       saveCurrentCharacterData();
-      alert(`¡Personaje cargado correctamente en el Slot ${currentSlot}!`);
+      const importedName = normalized.inputs?.charName?.trim() || `Personaje ${currentSlot}`;
+      alert(`¡"${importedName}" cargado correctamente en el Slot ${currentSlot}!`);
     } catch (err) {
-      alert('Error al leer el archivo JSON.');
+      alert('El archivo seleccionado no es un JSON de personaje válido.');
     }
   };
   reader.readAsText(file);
   event.target.value = '';
+
+}
+
+function formatExportTimestamp(date = new Date()) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}_${hours}-${minutes}`;
 }

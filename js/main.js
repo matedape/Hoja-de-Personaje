@@ -29,26 +29,58 @@ import {
   updateTrackers
 } from './renderer.js';
 
+let saveDebounceTimer = null;
+
+function scheduleSaveCharacterData(delay = 350) {
+  if (saveDebounceTimer) {
+    clearTimeout(saveDebounceTimer);
+  }
+  saveDebounceTimer = setTimeout(() => {
+    saveDebounceTimer = null;
+    saveCurrentCharacterData();
+  }, delay);
+}
+
+function flushSaveCharacterData() {
+  if (saveDebounceTimer) {
+    clearTimeout(saveDebounceTimer);
+    saveDebounceTimer = null;
+  }
+  saveCurrentCharacterData();
+}
+
 // --- INICIALIZACIÓN DE LA APLICACIÓN ---
 window.addEventListener('DOMContentLoaded', () => {
   const savedSlot = loadAllSlotsFromStorage();
   if (savedSlot) setCurrentSlot(savedSlot);
-  
+
   migrateOldDataIfNeeded();
   renderTabs();
   loadCurrentCharacterData();
 
-  // Escuchadores de eventos para autoguardado de campos generales
+  // Autoguardado con debounce para campos generales
   document.addEventListener('input', (e) => {
     if (formInputIds.includes(e.target.id)) return;
-    saveCurrentCharacterData();
+    scheduleSaveCharacterData(350);
   });
 
+  // Guardado inmediato en cambios discretos (selects, checkboxes, etc.)
   document.addEventListener('change', (e) => {
-    saveCurrentCharacterData();
+    flushSaveCharacterData();
     if (e.target.classList.contains('save-cb') || e.target.classList.contains('food-cb') || e.target.classList.contains('energy-cb')) {
       updateTrackers();
     }
+  });
+
+  // Red de seguridad al ocultar/cambiar de pestaña o cerrar/suspender la página
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      flushSaveCharacterData();
+    }
+  });
+
+  window.addEventListener('pagehide', () => {
+    flushSaveCharacterData();
   });
 });
 
@@ -65,7 +97,7 @@ window.importCharacter = importCharacter;
 
 window.switchSlot = function(newSlot) {
   if (newSlot === currentSlot) return;
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
   setCurrentSlot(newSlot);
   loadCurrentCharacterData();
   renderTabs();
@@ -116,7 +148,7 @@ window.addEquipment = function() {
   document.getElementById('equipHasDetails').checked = false;
   window.toggleExtraFields('equip');
   renderEquipment();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 // --- OPERACIONES CRUD MOCHILA ---
@@ -154,7 +186,7 @@ window.addBagItem = function() {
   document.getElementById('bagHasDetails').checked = false;
   window.toggleExtraFields('bag');
   renderBackpack();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 // --- FILTRADO DE HABILIDADES ---
@@ -180,8 +212,7 @@ window.addSkill = function() {
   const cooldownInput = document.getElementById('skillCooldown');
   const descInput = document.getElementById('skillDesc');
   if (!nameInput || nameInput.value.trim() === '') return;
-  
-  // Recolectar etiquetas seleccionadas
+
   const selectedTags = [];
   const tagCheckboxes = document.querySelectorAll('#skillTagsContainer input[type="checkbox"]:checked');
   tagCheckboxes.forEach(cb => selectedTags.push(cb.value));
@@ -217,7 +248,7 @@ window.addSkill = function() {
   tagCheckboxes.forEach(cb => cb.checked = false);
 
   renderSkills();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 // --- OPERACIONES CRUD ESTADOS ---
@@ -235,7 +266,7 @@ window.addStatus = function() {
   nameInput.value = '';
   if (durationInput) durationInput.value = '';
   renderStatuses();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 window.changeItemQty = function(storageKey, index, delta) {
@@ -245,7 +276,7 @@ window.changeItemQty = function(storageKey, index, delta) {
     if (list[index].qty <= 0) list.splice(index, 1);
     if (storageKey === 'equip') renderEquipment();
     else renderBackpack();
-    saveCurrentCharacterData();
+    flushSaveCharacterData();
   }
 };
 
@@ -257,20 +288,39 @@ window.deleteItem = function(storageKey, index) {
     charactersData[currentSlot].backpack.splice(index, 1);
     renderBackpack();
   }
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 window.deleteSkill = function(id) {
   charactersData[currentSlot].skills = charactersData[currentSlot].skills.filter(s => s.id !== id);
   renderSkills();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 window.deleteStatus = function(id) {
   charactersData[currentSlot].statuses = charactersData[currentSlot].statuses.filter(s => s.id !== id);
   renderStatuses();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
+
+
+//Boton de Guardado manual 
+window.manualSaveCharacter = function() {
+  flushSaveCharacterData();
+  const btn = document.getElementById('floatingSaveBtn');
+  if (!btn) return;
+  btn.classList.add('saved');
+  setTimeout(() => {
+    btn.classList.remove('saved');
+  }, 900);
+};
+
+
+
+
+
+
+
 
 // --- CONTROL DE FAVORITOS (MÁXIMO 3) ---
 window.toggleFavoriteSkill = function(id) {
@@ -290,7 +340,7 @@ window.toggleFavoriteSkill = function(id) {
   }
 
   renderSkills();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 window.editSkill = function(id) {
@@ -300,8 +350,7 @@ window.editSkill = function(id) {
   document.getElementById('skillType').value = skill.type || 'Activa';
   document.getElementById('skillCooldown').value = skill.cooldown || '';
   document.getElementById('skillDesc').value = skill.desc || '';
-  
-  // Marcar los checkboxes de etiquetas correspondientes
+
   const tagCheckboxes = document.querySelectorAll('#skillTagsContainer input[type="checkbox"]');
   tagCheckboxes.forEach(cb => {
     cb.checked = skill.tags && skill.tags.includes(cb.value);
@@ -321,7 +370,7 @@ window.moveItem = function(type, index, direction) {
     list[targetIndex] = temp;
     if (type === 'equip') renderEquipment();
     else renderBackpack();
-    saveCurrentCharacterData();
+    flushSaveCharacterData();
   }
 };
 
@@ -336,7 +385,7 @@ window.moveSkill = function(index, direction) {
   skills[index] = targetSkill;
   skills[targetIndex] = currentSkill;
   renderSkills();
-  saveCurrentCharacterData();
+  flushSaveCharacterData();
 };
 
 window.changeStatusQty = function(id, delta) {
@@ -351,7 +400,7 @@ window.changeStatusQty = function(id, delta) {
       }
       status.duration = current.toString();
       renderStatuses();
-      saveCurrentCharacterData();
+      flushSaveCharacterData();
     }
   }
 };

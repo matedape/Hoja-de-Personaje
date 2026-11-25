@@ -852,6 +852,41 @@ select option:checked {
 
 
 
+
+
+.floating-save-btn {
+  position: fixed;
+  bottom: 89px;
+  right: 25px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: var(--accent-color, #6b1d1d);
+  color: #fff;
+  border: 3px solid var(--paper-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.floating-save-btn:hover {
+  transform: scale(1.1) rotate(10deg);
+  background-color: var(--accent-hover);
+}
+
+.floating-save-btn.saved {
+  background-color: #2e6f40;
+  transform: scale(1.08);
+}
+
+
+
+
+
 .filter-tag-icon-btn {
   padding: 6px 10px;
   display: inline-flex;
